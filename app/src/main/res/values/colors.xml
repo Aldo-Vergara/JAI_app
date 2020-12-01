@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#78C2F3</color>
-    <color name="colorPrimaryDark">#63A2CC</color>
+    <color name="colorPrimary">#C71C81</color>
+    <color name="colorPrimaryDark">#4459A0</color>
     <color name="colorAccent">#EAEAEA</color>
 
-    <color name="colorNice_Cyan">#78C2F3</color>
-    <color name="colorNice_Cyan_Hover">#63A2CC</color>
-    <color name="colorNice_Darkblue">#0A2140</color>
-    <color name="colorNice_Darkblue_Hover">#040F1D</color>
-    <color name="colorNice_Orange">#F97D2C</color>
-    <color name="colorNice_Orange_Hover">#BB5E21</color>
-    <color name="colorNice_White">#EAEAEA</color>
-    <color name="colorNice_Gray">#62656A</color>
 </resources>

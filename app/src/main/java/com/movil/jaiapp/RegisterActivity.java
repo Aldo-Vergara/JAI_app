@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.tabs.TabLayout;
-import com.movil.jaiapp.ui.member.AdapterRegister;
+import com.movil.jaiapp.ui.register.member.AdapterRegister;
 
 public class RegisterActivity extends AppCompatActivity {
 

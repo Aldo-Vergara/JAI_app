@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_profile">
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.movil.jaiapp.ui.member.profile.ProfileFragment"
+        android:label="@string/menu_member_profile"
+        tools:layout="@layout/fragment_member_profile" />
+
+    <fragment
+        android:id="@+id/nav_add_product"
+        android:name="com.movil.jaiapp.ui.member.add.AddFragment"
+        android:label="@string/menu_member_add"
+        tools:layout="@layout/fragment_member_add" />
+
+    <fragment
+        android:id="@+id/nav_search_product"
+        android:name="com.movil.jaiapp.ui.member.search.SearchFragment"
+        android:label="@string/menu_member_search"
+        tools:layout="@layout/fragment_member_search" />
+
+    <fragment
+        android:id="@+id/nav_available_product"
+        android:name="com.movil.jaiapp.ui.member.list_available.ListAvailableFragment"
+        android:label="@string/menu_member_available"
+        tools:layout="@layout/fragment_member_list_available" />
+
+    <fragment
+        android:id="@+id/nav_not_available_product"
+        android:name="com.movil.jaiapp.ui.member.list_notAvailable.ListNotAvailableFragment"
+        android:label="@string/menu_member_not_available"
+        tools:layout="@layout/fragment_member_list_not_available" />
+</navigation>

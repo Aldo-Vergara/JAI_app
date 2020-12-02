@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="array_category">
+        <item>Seleccione categoria</item>
+        <item>Belleza</item>
+        <item>Celulares</item>
+        <item>Comida</item>
+        <item>Computación</item>
+        <item>Electrodomésticos</item>
+        <item>Hogar</item>
+        <item>Joyería</item>
+        <item>Juguetería</item>
+        <item>Limpieza</item>
+        <item>Mueblería</item>
+        <item>Ropa</item>
+        <item>Videojuegos</item>
+        <item>Zapatería</item>
+    </string-array>
+
+</resources>

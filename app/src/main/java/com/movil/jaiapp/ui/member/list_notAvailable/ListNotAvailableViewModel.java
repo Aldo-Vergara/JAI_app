@@ -10,7 +10,7 @@ public class ListNotAvailableViewModel extends ViewModel {
 
     public ListNotAvailableViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is list_available fragment");
+        mText.setValue("This is wish_list fragment");
     }
 
     public LiveData<String> getText() {

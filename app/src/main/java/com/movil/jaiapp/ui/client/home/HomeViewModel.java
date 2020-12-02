@@ -1,14 +1,14 @@
-package com.movil.jaiapp.ui.member.add;
+package com.movil.jaiapp.ui.client.home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class AddViewModel extends ViewModel {
+public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public AddViewModel() {
+    public HomeViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("This is home fragment");
     }

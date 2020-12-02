@@ -47,4 +47,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main_client">MainClientActivity</string>
+    <string name="nav_header_title">Android Studio</string>
+
+    <string name="menu_client_home">Inicio</string>
+    <string name="menu_client_wishList">Lista de deseos</string>
 </resources>

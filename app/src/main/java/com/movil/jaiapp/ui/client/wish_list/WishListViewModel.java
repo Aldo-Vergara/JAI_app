@@ -1,16 +1,16 @@
-package com.movil.jaiapp.ui.member.add;
+package com.movil.jaiapp.ui.client.wish_list;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class AddViewModel extends ViewModel {
+public class WishListViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public AddViewModel() {
+    public WishListViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mText.setValue("This is wish_list fragment");
     }
 
     public LiveData<String> getText() {

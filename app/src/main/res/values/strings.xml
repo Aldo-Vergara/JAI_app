@@ -16,6 +16,7 @@
     <string name="str_email">Correo</string>
     <string name="str_password">Contraseña</string>
     <string name="str_confirm_password">Confirmar Contraseña</string>
+    <string name="str_new_password">Nueva Contraseña</string>
     <string name="str_all">Todo</string>
 
     <string name="str_product_id">ID</string>

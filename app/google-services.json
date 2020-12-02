@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "358661106844",
+    "firebase_url": "https://mobshop-c7b0c.firebaseio.com",
+    "project_id": "mobshop-c7b0c",
+    "storage_bucket": "mobshop-c7b0c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358661106844:android:eda3b3d8bd4bee4ebbd159",
+        "android_client_info": {
+          "package_name": "com.movil.jaiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358661106844-215tbo3hhgtfls32opd5nnr1a8ambdb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.movil.jaiapp",
+            "certificate_hash": "80518382fef3073c66c9fa5443417d3f536a43a7"
+          }
+        },
+        {
+          "client_id": "358661106844-gg9t316jlpajvh5nasak1tmgjdo4cehe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH3eWlI1RfF_UW0mOF-wv5sWB7Hd_G2LQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358661106844-gg9t316jlpajvh5nasak1tmgjdo4cehe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

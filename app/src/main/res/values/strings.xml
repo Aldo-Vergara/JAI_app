@@ -35,7 +35,7 @@
     <string name="str_update">Actualizar</string>
     <string name="str_delete">Eliminar</string>
     <string name="str_signUp">Acceder</string>
-    <string name="str_register">Registrarse</string>
+    <string name="str_register">Registrarme</string>
 
     <string name="str_socio">Como vendedor</string>
     <string name="str_client">Como cliente</string>
@@ -53,4 +53,5 @@
 
     <string name="menu_client_home">Inicio</string>
     <string name="menu_client_wishList">Lista de deseos</string>
+    <string name="menu_client_contact">Información del vendedor</string>
 </resources>

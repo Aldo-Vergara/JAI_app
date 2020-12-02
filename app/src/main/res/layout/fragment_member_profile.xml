@@ -45,6 +45,9 @@
                     android:id="@+id/member_frag_profile_txtInputEdit_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:duplicateParentState="false"
+                    android:editable="false"
+                    android:enabled="false"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -57,6 +60,8 @@
                     android:id="@+id/member_frag_profile_txtInputEdit_lastName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:enabled="false"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,6 +74,8 @@
                     android:id="@+id/member_frag_profile_txtInputEdit_numMember"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:enabled="false"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,6 +100,8 @@
                     android:id="@+id/member_frag_profile_txtInputEdit_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:enabled="false"
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -124,7 +133,7 @@
                 android:id="@+id/member_frag_profile_btn_register"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/str_register" />
+                android:text="@string/str_update" />
 
         </LinearLayout>
     </ScrollView>

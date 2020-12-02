@@ -1,4 +1,4 @@
-package com.movil.jaiapp.ui.register.member;
+package com.movil.jaiapp.ui.register;
 
 import android.content.Context;
 
@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.movil.jaiapp.ui.register.client.ClientFragment;
+import com.movil.jaiapp.ui.register.member.MemberFragment;
 
 public class AdapterRegister extends FragmentPagerAdapter {
 

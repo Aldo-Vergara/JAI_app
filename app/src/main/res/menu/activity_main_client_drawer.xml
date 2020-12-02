@@ -12,5 +12,9 @@
             android:id="@+id/nav_wish_list"
             android:icon="@drawable/ic_menu_add"
             android:title="@string/menu_client_wishList" />
+        <item
+            android:id="@+id/nav_contact"
+            android:icon="@drawable/ic_menu_add"
+            android:title="@string/menu_client_contact" />
     </group>
 </menu>

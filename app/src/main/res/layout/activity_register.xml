@@ -14,7 +14,12 @@
             android:id="@+id/register_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            tools:ignore="UnusedAttribute"
             android:background="@color/colorPrimaryDark"
+            app:titleTextColor="@color/colorAccent"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <com.google.android.material.tabs.TabLayout
@@ -22,9 +27,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:tabMode="scrollable">
+            app:tabGravity="start"
+            app:tabIndicatorColor="@color/colorPrimaryMate"
+            app:tabMode="scrollable"
+            app:tabTextColor="@color/colorAccent">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

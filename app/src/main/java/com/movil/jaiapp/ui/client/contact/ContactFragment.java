@@ -1,4 +1,4 @@
-package com.movil.jaiapp.ui.client.home;
+package com.movil.jaiapp.ui.client.contact;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,15 +10,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.movil.jaiapp.R;
+import com.movil.jaiapp.ui.client.home.HomeViewModel;
 
-public class HomeFragment extends Fragment {
+public class ContactFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    private ContactViewModel contactViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_client_home, container, false);
+        contactViewModel = ViewModelProviders.of(this).get(ContactViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_client_contact, container, false);
 
         return root;
     }

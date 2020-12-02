@@ -9,9 +9,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.tabs.TabLayout;
-import com.movil.jaiapp.ui.register.member.AdapterRegister;
+import com.movil.jaiapp.ui.register.AdapterRegister;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -27,6 +28,13 @@ public class RegisterActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setTitle("Registro");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                finish();
+            }
+        });
 
         tabLayout = findViewById(R.id.options_tabLayout);
         viewPager = findViewById(R.id.register_viewPager);
@@ -50,21 +58,4 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.register_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if(item.getItemId() == R.id.menu_register){
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
-        }else{
-            return super.onContextItemSelected(item);
-        }
-        return true;
-    }
 }

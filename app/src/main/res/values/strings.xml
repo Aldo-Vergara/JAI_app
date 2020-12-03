@@ -36,6 +36,7 @@
     <string name="str_delete">Eliminar</string>
     <string name="str_signUp">Acceder</string>
     <string name="str_register">Registrarme</string>
+    <string name="str_create_account">Crear una cuenta</string>
 
     <string name="str_socio">Como vendedor</string>
     <string name="str_client">Como cliente</string>

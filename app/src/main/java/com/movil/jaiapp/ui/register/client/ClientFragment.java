@@ -163,5 +163,4 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
 }

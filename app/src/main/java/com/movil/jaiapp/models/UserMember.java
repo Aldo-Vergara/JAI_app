@@ -4,20 +4,28 @@ import java.util.List;
 
 public class UserMember {
 
+    private String id;
     private String numMember;
     private String name;
     private String lastname;
-    private int phoneNumber;
+    private String phoneNumber;
     private String email;
     private String password;
     private String image;
     private List<Product> productsList;
+    private double ubLat;
+    private double ubLong;
     private String role;
     private String created;
     private String updated;
     private int enable;
 
-    public UserMember(String numMember, String name, String lastname, int phoneNumber, String email, String password, String image, List<Product> productsList, String role, String created, String updated, int enable) {
+    public UserMember(){
+
+    }
+
+    public UserMember(String id, String numMember, String name, String lastname, String phoneNumber, String email, String password, String image, List<Product> productsList, double ubLat, double ubLong, String role, String created, String updated, int enable) {
+        this.id = id;
         this.numMember = numMember;
         this.name = name;
         this.lastname = lastname;
@@ -26,10 +34,20 @@ public class UserMember {
         this.password = password;
         this.image = image;
         this.productsList = productsList;
+        this.ubLat = ubLat;
+        this.ubLong = ubLong;
         this.role = role;
         this.created = created;
         this.updated = updated;
         this.enable = enable;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNumMember() {
@@ -56,11 +74,11 @@ public class UserMember {
         this.lastname = lastname;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -94,6 +112,22 @@ public class UserMember {
 
     public void setProductsList(List<Product> productsList) {
         this.productsList = productsList;
+    }
+
+    public double getUbLat() {
+        return ubLat;
+    }
+
+    public void setUbLat(double ubLat) {
+        this.ubLat = ubLat;
+    }
+
+    public double getUbLong() {
+        return ubLong;
+    }
+
+    public void setUbLong(double ubLong) {
+        this.ubLong = ubLong;
     }
 
     public String getRole() {

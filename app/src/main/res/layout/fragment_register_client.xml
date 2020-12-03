@@ -30,7 +30,9 @@
                     android:id="@+id/client_txtInputEdit_nMember"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:drawableLeft="@drawable/ic_pin"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -42,7 +44,9 @@
                     android:id="@+id/client_txtInputEdit_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:drawableLeft="@drawable/ic_person"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -54,7 +58,9 @@
                     android:id="@+id/client_txtInputEdit_lastName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:drawableLeft="@drawable/ic_person"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -66,7 +72,9 @@
                     android:id="@+id/client_txtInputEdit_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:drawableLeft="@drawable/ic_email"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -78,7 +86,9 @@
                     android:id="@+id/client_txtInputEdit_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:drawableLeft="@drawable/ic_security"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -90,7 +100,9 @@
                     android:id="@+id/client_txtInputEdit_confirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:drawableLeft="@drawable/ic_security"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button

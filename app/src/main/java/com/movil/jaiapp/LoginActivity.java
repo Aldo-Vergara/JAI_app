@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.models.UserClient;
+import com.movil.jaiapp.models.UserMember;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -102,6 +103,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             UserClient userClient = objSnaptshot.getValue(UserClient.class);
                                             if(etEmail.getText().toString().trim().equals(userClient.getEmail())){
                                                 startActivity(new Intent(getApplicationContext(), MainClientActivity.class));
+                                                finish();
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                databaseReferenceClient.child("UserMember").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
+                                            UserMember userMember = objSnaptshot.getValue(UserMember.class);
+                                            if(etEmail.getText().toString().trim().equals(userMember.getEmail())){
+                                                startActivity(new Intent(getApplicationContext(), MainMemberActivity.class));
                                                 finish();
                                                 break;
                                             }

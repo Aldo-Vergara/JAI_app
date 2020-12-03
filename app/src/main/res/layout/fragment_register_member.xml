@@ -12,6 +12,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -38,7 +40,9 @@
                     android:id="@+id/member_txtInputEdit_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:drawableLeft="@drawable/ic_person"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -50,7 +54,9 @@
                     android:id="@+id/member_txtInputEdit_lastName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:drawableLeft="@drawable/ic_person"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -62,7 +68,9 @@
                     android:id="@+id/member_txtInputEdit_numMember"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:drawableLeft="@drawable/ic_pin"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -74,7 +82,9 @@
                     android:id="@+id/member_txtInputEdit_phoneNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"/>
+                    android:inputType="phone"
+                    android:drawableLeft="@drawable/ic_phone"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -86,7 +96,9 @@
                     android:id="@+id/member_txtInputEdit_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"/>
+                    android:inputType="textEmailAddress"
+                    android:drawableLeft="@drawable/ic_email"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -98,7 +110,9 @@
                     android:id="@+id/member_txtInputEdit_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"/>
+                    android:inputType="textPassword"
+                    android:drawableLeft="@drawable/ic_security"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -110,8 +124,18 @@
                     android:id="@+id/member_txtInputEdit_confirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"/>
+                    android:inputType="textPassword"
+                    android:drawableLeft="@drawable/ic_security"
+                    android:drawablePadding="10dp"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/member_mapView_ubication"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                tools:layout_editor_absoluteY="8dp"/>
 
             <Button
                 android:id="@+id/member_btn_register"

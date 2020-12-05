@@ -32,8 +32,6 @@ import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
 
 import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 public class AddFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener{
 
@@ -149,7 +147,7 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
                 if(task.isSuccessful()){
                     mClean();
                     Toast.makeText(getContext(), "Producto agregado", Toast.LENGTH_SHORT).show();
-                    //getActivity().finish();
+                    getActivity().finish();
                 }else{
                     mShowAlert("Error", "No se pudo guardar el registro");
                 }
@@ -162,26 +160,29 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
         switch(view.getId()){
             case R.id.member_frag_add_btn_save:
                 if(!etIdP.getText().toString().trim().isEmpty() && !etNameP.getText().toString().trim().isEmpty() &&
-                        !etCostP.getText().toString().trim().isEmpty() && !etDescP.getText().toString().trim().isEmpty() &&
-                        !strCategory.equals("")){
-                    if(switchP.isChecked()){
-                        statusP = 1;
+                        !etCostP.getText().toString().trim().isEmpty() && !etDescP.getText().toString().trim().isEmpty()){
+                    if(!strCategory.equals("")){
+                        if(switchP.isChecked()){
+                            statusP = 1;
+                        }else{
+                            statusP = 0;
+                        }
+                        Product product = new Product(
+                                etIdP.getText().toString().trim(),
+                                strCategory,
+                                etNameP.getText().toString().trim(),
+                                etCostP.getText().toString().trim(),
+                                etDescP.getText().toString().trim(),
+                                statusP,
+                                null,
+                                new Date().toString(),
+                                null
+                        );
+                        userData.getProductsList().add(product);
+                        updateRegister(userData);
                     }else{
-                        statusP = 0;
+                        Toast.makeText(getContext(), "Debe seleccionar una categoría", Toast.LENGTH_SHORT).show();
                     }
-                    Product product = new Product(
-                            UUID.randomUUID().toString(),
-                            strCategory,
-                            etNameP.getText().toString().trim(),
-                            etCostP.getText().toString().trim(),
-                            etDescP.getText().toString().trim(),
-                            statusP,
-                            null,
-                            new Date().toString(),
-                            null
-                    );
-                    userData.getProductsList().add(product);
-                    updateRegister(userData);
                 }else{
                     mValidate();
                 }

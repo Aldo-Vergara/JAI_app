@@ -29,10 +29,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.R;
-import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener{
 
@@ -71,27 +71,25 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
     }
 
     private void initComponents(View root) {
-        etIdP = root.findViewById(R.id.member_frag_edit_txtEdit_id);
-        etNameP = root.findViewById(R.id.member_frag_edit_txtEdit_name);
-        etCostP = root.findViewById(R.id.member_frag_edit_txtEdit_cost);
-        etDescP = root.findViewById(R.id.member_frag_edit_txtEdit_description);
+        etIdP = root.findViewById(R.id.member_frag_search_txtEdit_id);
+        etNameP = root.findViewById(R.id.member_frag_search_txtEdit_name);
+        etCostP = root.findViewById(R.id.member_frag_search_txtEdit_cost);
+        etDescP = root.findViewById(R.id.member_frag_search_txtEdit_description);
 
-
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(getContext(), R.array.array_category, android.R.layout.simple_spinner_item);
-        spnCatP = root.findViewById(R.id.member_frag_edit_spn_category);
-        spnCatP.setAdapter(categoryAdapter);
+        spnCatP = root.findViewById(R.id.member_frag_search_spn_category);
+        loadDataSpinner(spnCatP);
         spnCatP.setOnItemSelectedListener(this);
 
-        switchP = root.findViewById(R.id.member_frag_edit_switch_status);
+        switchP = root.findViewById(R.id.member_frag_search_switch_status);
 
-        imgBtnSearch = root.findViewById(R.id.member_frag_edit_imgBtn_search);
+        imgBtnSearch = root.findViewById(R.id.member_frag_search_imgBtn_search);
         imgBtnSearch.setOnClickListener(this);
 
-        btnUpdate = root.findViewById(R.id.member_frag_edit_btn_update);
+        btnUpdate = root.findViewById(R.id.member_frag_search_btn_update);
         btnUpdate.setOnClickListener(this);
-        btnDelete = root.findViewById(R.id.member_frag_edit_btn_delete);
+        btnDelete = root.findViewById(R.id.member_frag_search_btn_delete);
         btnDelete.setOnClickListener(this);
-        btnClean = root.findViewById(R.id.member_frag_edit_btn_clean);
+        btnClean = root.findViewById(R.id.member_frag_search_btn_clean);
         btnClean.setOnClickListener(this);
     }
 
@@ -122,8 +120,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
         etCostP.setText("");
         etDescP.setText("");
 
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(getContext(), R.array.array_category, android.R.layout.simple_spinner_item);
-        spnCatP.setAdapter(categoryAdapter);
+        loadDataSpinner(spnCatP);
         strCategory = "";
         flag = 0;
     }
@@ -164,6 +161,29 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
         });
     }
 
+    private void loadDataSpinner(final Spinner spn){
+        databaseReference.child("Category").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<String> categories = new ArrayList<String>();
+
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
+                    String categoryName = dataSnapshot1.child("name").getValue(String.class);
+                    categories.add(categoryName);
+                }
+
+                ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, categories);
+                categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spn.setAdapter(categoryAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static int getPosition(Spinner spinner, String item){
         int posicion = 0;
         for (int i = 0; i < spinner.getCount(); i++){
@@ -177,7 +197,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.member_frag_edit_imgBtn_search:
+            case R.id.member_frag_search_imgBtn_search:
                 if(!etIdP.getText().toString().trim().isEmpty()){
                     boolean exist = true;
                     for(int i = 1; i < userData.getProductsList().size(); i++){
@@ -214,7 +234,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                     etIdP.setError("Ingrese el ID del producto");
                 }
                 break;
-            case R.id.member_frag_edit_btn_update:
+            case R.id.member_frag_search_btn_update:
                 if(flag == 1){
                     if(!etIdP.getText().toString().trim().isEmpty() && !etNameP.getText().toString().trim().isEmpty() &&
                             !etCostP.getText().toString().trim().isEmpty() && !etDescP.getText().toString().trim().isEmpty()){
@@ -242,7 +262,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                     mShowAlert("Información", "Primero debe buscar un producto");
                 }
                 break;
-            case R.id.member_frag_edit_btn_clean:
+            case R.id.member_frag_search_btn_clean:
                 mClean();
                 break;
         }

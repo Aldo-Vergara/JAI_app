@@ -31,7 +31,9 @@ import com.movil.jaiapp.R;
 import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AddFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener{
 
@@ -73,10 +75,8 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
         etCostP = root.findViewById(R.id.member_frag_add_txtEdit_cost);
         etDescP = root.findViewById(R.id.member_frag_add_txtEdit_description);
 
-
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(getContext(), R.array.array_category, android.R.layout.simple_spinner_item);
         spnCatP = root.findViewById(R.id.member_frag_add_spn_category);
-        spnCatP.setAdapter(categoryAdapter);
+        loadDataSpinner(spnCatP);
         spnCatP.setOnItemSelectedListener(this);
 
         switchP = root.findViewById(R.id.member_frag_add_switch_status);
@@ -85,6 +85,29 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
         btnSave.setOnClickListener(this);
         btnClean = root.findViewById(R.id.member_frag_add_btn_clean);
         btnClean.setOnClickListener(this);
+    }
+
+    private void loadDataSpinner(final Spinner spn){
+        databaseReference.child("Category").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<String> categories = new ArrayList<String>();
+
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
+                    String categoryName = dataSnapshot1.child("name").getValue(String.class);
+                    categories.add(categoryName);
+                }
+
+                ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, categories);
+                categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spn.setAdapter(categoryAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void getUserActive() {
@@ -114,8 +137,7 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
         etCostP.setText("");
         etDescP.setText("");
 
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(getContext(), R.array.array_category, android.R.layout.simple_spinner_item);
-        spnCatP.setAdapter(categoryAdapter);
+        loadDataSpinner(spnCatP);
         strCategory = "";
     }
 
@@ -174,9 +196,9 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
                                 etCostP.getText().toString().trim(),
                                 etDescP.getText().toString().trim(),
                                 statusP,
-                                null,
+                                "",
                                 new Date().toString(),
-                                null
+                                ""
                         );
                         userData.getProductsList().add(product);
                         updateRegister(userData);

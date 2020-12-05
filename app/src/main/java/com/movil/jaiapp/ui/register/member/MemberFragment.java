@@ -136,7 +136,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                             etPhoneNumber.getText().toString().trim(),
                             etEmail.getText().toString().trim(),
                             etPassword.getText().toString().trim(),
-                            null,
+                            "",
                             productList,
                             dLat,
                             dLong,

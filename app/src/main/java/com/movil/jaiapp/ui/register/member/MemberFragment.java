@@ -1,10 +1,13 @@
 package com.movil.jaiapp.ui.register.member;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -19,8 +22,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,11 +38,13 @@ import com.movil.jaiapp.models.UserMember;
 import java.util.Date;
 import java.util.UUID;
 
-public class MemberFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback {
+public class MemberFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private MemberViewModel memberViewModel;
     private EditText etName, etLastname, etNumMember, etPhoneNumber, etEmail, etPassword, etConfirmPassword;
-    private double dLat = 19.067577, dLong = -99.383843;
+    private String lat, log;
+    double dLat, dLong;
+    private Marker ubicacion;
     private Button btnRegister;
     private MapView mapView;
 
@@ -47,7 +52,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
     private DatabaseReference databaseReference;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
-                              ViewGroup container, Bundle savedInstanceState) {
+                             ViewGroup container, Bundle savedInstanceState) {
 
         memberViewModel = ViewModelProviders.of(this).get(MemberViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_register_member, container, false);
@@ -76,25 +81,25 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
         btnRegister.setOnClickListener(this);
     }
 
-    private void mValidate(){
-        if (etName.getText().toString().equals("")){
+    private void mValidate() {
+        if (etName.getText().toString().equals("")) {
             etName.setError("Nombre requerido");
-        }else if (etLastname.getText().toString().equals("")){
+        } else if (etLastname.getText().toString().equals("")) {
             etLastname.setError("Apellidos requeridos");
-        }else if (etPhoneNumber.getText().toString().equals("")){
+        } else if (etPhoneNumber.getText().toString().equals("")) {
             etPhoneNumber.setError("Número de teléfono requerido");
-        }else if (etNumMember.getText().toString().equals("")){
+        } else if (etNumMember.getText().toString().equals("")) {
             etNumMember.setError("Número de socio requerido");
-        }else if (etEmail.getText().toString().equals("") ){
+        } else if (etEmail.getText().toString().equals("")) {
             etEmail.setError("Correo requerido");
-        }else if (etPassword.getText().toString().equals("")){
+        } else if (etPassword.getText().toString().equals("")) {
             etPassword.setError("Contraseña requerida");
-        }else if (etConfirmPassword.getText().toString().equals("")){
+        } else if (etConfirmPassword.getText().toString().equals("")) {
             etConfirmPassword.setError("Contraseña requerida");
         }
     }
 
-    private void mClean(){
+    private void mClean() {
         etNumMember.setText("");
         etName.setText("");
         etLastname.setText("");
@@ -104,7 +109,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
         etConfirmPassword.setText("");
     }
 
-    private void mShowAlert(String title, String message){
+    private void mShowAlert(String title, String message) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
         dialog.setMessage(message);
@@ -117,7 +122,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     UserMember userMember = new UserMember(
                             UUID.randomUUID().toString(),
                             etNumMember.getText().toString().trim(),
@@ -139,17 +144,17 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                     databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 mClean();
                                 startActivity(new Intent(getContext(), MainMemberActivity.class));
                                 getActivity().finish();
-                            }else{
+                            } else {
                                 mShowAlert("Error", "Se ha producido un error en la conexión");
                             }
                         }
                     });
 
-                }else{
+                } else {
                     mShowAlert("Error", "Se ha producido un error al crear el usuario");
                 }
             }
@@ -158,25 +163,25 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.member_btn_register:
-                if(!etNumMember.getText().toString().isEmpty() && !etName.getText().toString().isEmpty() &&
+                if (!etNumMember.getText().toString().isEmpty() && !etName.getText().toString().isEmpty() &&
                         !etLastname.getText().toString().isEmpty() && !etEmail.getText().toString().isEmpty() &&
                         !etPassword.getText().toString().isEmpty() && !etConfirmPassword.getText().toString().isEmpty() &&
-                        !etPhoneNumber.getText().toString().isEmpty()){
+                        !etPhoneNumber.getText().toString().isEmpty()) {
 
-                    if(etPassword.getText().toString().length() >= 6){
-                        if(etPassword.getText().toString().equals(etConfirmPassword.getText().toString())){
+                    if (etPassword.getText().toString().length() >= 6) {
+                        if (etPassword.getText().toString().equals(etConfirmPassword.getText().toString())) {
                             String email = etEmail.getText().toString().trim();
                             String password = etPassword.getText().toString().trim();
                             mRegisterUser(email, password);
-                        }else{
+                        } else {
                             Toast.makeText(getContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
                         }
-                    }else{
+                    } else {
                         Toast.makeText(getContext(), "La contraseña debe tener al menos 6 carácteres", Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     mValidate();
                     Toast.makeText(getContext(), "Debe llenar todos los campos", Toast.LENGTH_SHORT).show();
                 }
@@ -192,13 +197,25 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng latLng = new LatLng(dLat, dLong);
-        googleMap.addMarker(new MarkerOptions().position(latLng).title("Tu ubicación"));
-        CameraPosition cameraPosition = CameraPosition.builder()
-                .target(latLng)
-                .zoom(10)
-                .build();
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        LatLng ubication = new LatLng(19.067577, -99.383843);
+        ubicacion = googleMap.addMarker(new MarkerOptions()
+                .position(ubication)
+                .title("Seleciona tu ubicación")
+                .draggable(true)
+        );
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubication, 7));
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.setOnMarkerClickListener(this);
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        googleMap.setMyLocationEnabled(true);
     }
 
     @Override
@@ -225,4 +242,13 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
         mapView.onSaveInstanceState(outState);
     }
 
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if (marker.equals(ubicacion)){
+            dLat = marker.getPosition().latitude;
+            dLong = marker.getPosition().longitude;
+            Toast.makeText(getContext(),"Mi ubicacion es: "+dLat+" , "+dLong,Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
 }

@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.view.Menu;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -58,8 +59,10 @@ public class MainMemberActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item)
     {
         if(item.getItemId() == R.id.member_action_close){
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
+            FirebaseAuth.getInstance().signOut();
+            //onBackPressed();
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            finish();
         }else{
             return super.onContextItemSelected(item);
         }

@@ -130,7 +130,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/member_frag_profile_btn_register"
+                android:id="@+id/member_frag_profile_btn_update"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/str_update" />

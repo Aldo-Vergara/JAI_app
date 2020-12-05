@@ -18,13 +18,20 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.MainClientActivity;
 import com.movil.jaiapp.R;
+import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserClient;
+import com.movil.jaiapp.models.UserMember;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -95,45 +102,75 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
         dialog.show();
     }
 
-    private void mRegisterUser(String email, String password) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    private void mRegisterUser(final String email, final String password) {
+        databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean b = false;
+                for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
+                    final UserMember userMember = objSnaptshot.getValue(UserMember.class);
+                    if(etNumMember.getText().toString().trim().equals(userMember.getNumMember())){
+                        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
 
-                if(task.isSuccessful()){
-                    UserClient userClient = new UserClient(
-                            UUID.randomUUID().toString(),
-                            etNumMember.getText().toString().trim(),
-                            etName.getText().toString().trim(),
-                            etLastname.getText().toString().trim(),
-                            etEmail.getText().toString().trim(),
-                            etPassword.getText().toString().trim(),
-                            null,
-                            null,
-                            "user",
-                            new Date().toString(),
-                            null,
-                            1
-                    );
+                                if(task.isSuccessful()){
+                                    List<Product> sellerProductList = new ArrayList<>();
+                                    sellerProductList = userMember.getProductsList();
+                                    List<Product> wishProductList = new ArrayList<>();
+                                    Product product = new Product(UUID.randomUUID().toString());
+                                    wishProductList.add(product);
+                                    UserClient userClient = new UserClient(
+                                            UUID.randomUUID().toString(),
+                                            etNumMember.getText().toString().trim(),
+                                            etName.getText().toString().trim(),
+                                            etLastname.getText().toString().trim(),
+                                            etEmail.getText().toString().trim(),
+                                            etPassword.getText().toString().trim(),
+                                            sellerProductList,
+                                            wishProductList,
+                                            "user",
+                                            new Date().toString(),
+                                            "",
+                                            1
+                                    );
 
-                    databaseReference.child("UserClient").child(userClient.getId()).setValue(userClient).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                mClean();
-                                startActivity(new Intent(getContext(), MainClientActivity.class));
-                                getActivity().finish();
-                            }else{
-                                mShowAlert("Error", "Se ha producido un error en la conexión");
+                                    databaseReference.child("UserClient").child(userClient.getId()).setValue(userClient).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                mClean();
+                                                startActivity(new Intent(getContext(), MainClientActivity.class));
+                                                getActivity().finish();
+                                            }else{
+                                                mShowAlert("Error", "Se ha producido un error en la conexión");
+                                            }
+                                        }
+                                    });
+
+                                }else{
+                                    mShowAlert("Error", "Se ha producido un error al crear el usuario, verifique sus datos");
+                                }
                             }
-                        }
-                    });
-
-                }else{
-                    mShowAlert("Error", "Se ha producido un error al crear el usuario");
+                        });
+                        b = false;
+                        break;
+                    }else{
+                        b = true;
+                    }
+                }
+                if(b){
+                    etNumMember.setError("El número de socio ingresado no existe");
                 }
             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
         });
+
+
     }
 
     @Override
@@ -150,10 +187,10 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
                             String password = etPassword.getText().toString().trim();
                             mRegisterUser(email, password);
                         }else{
-                            Toast.makeText(getContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+                            etConfirmPassword.setError("Las contraseñas no coinciden");
                         }
                     }else{
-                        Toast.makeText(getContext(), "La contraseña debe tener al menos 6 carácteres", Toast.LENGTH_SHORT).show();
+                        etPassword.setError("La contraseña debe tener al menos 6 carácteres");
                     }
                 }else{
                     mValidate();

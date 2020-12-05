@@ -47,7 +47,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         initFirebase();
         initComponents(root);
-        getUserActive(root);
+        getUserActive();
 
         return root;
     }
@@ -72,7 +72,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         databaseReference = firebaseDatabase.getReference();
     }
 
-    private void getUserActive(final View root) {
+    private void getUserActive() {
         user = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
             @Override

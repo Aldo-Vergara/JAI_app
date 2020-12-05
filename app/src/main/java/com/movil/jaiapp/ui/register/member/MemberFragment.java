@@ -33,16 +33,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.movil.jaiapp.MainMemberActivity;
 import com.movil.jaiapp.R;
+import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class MemberFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private MemberViewModel memberViewModel;
     private EditText etName, etLastname, etNumMember, etPhoneNumber, etEmail, etPassword, etConfirmPassword;
-    private String lat, log;
     double dLat, dLong;
     private Marker ubicacion;
     private Button btnRegister;
@@ -123,6 +125,9 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
+                    List<Product> productList = new ArrayList<>();
+                    Product product = new Product(UUID.randomUUID().toString());
+                    productList.add(product);
                     UserMember userMember = new UserMember(
                             UUID.randomUUID().toString(),
                             etNumMember.getText().toString().trim(),
@@ -132,12 +137,12 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                             etEmail.getText().toString().trim(),
                             etPassword.getText().toString().trim(),
                             null,
-                            null,
+                            productList,
                             dLat,
                             dLong,
                             "admin",
                             new Date().toString(),
-                            null,
+                            "",
                             1
                     );
 

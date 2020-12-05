@@ -11,6 +11,12 @@ public class Product {
     private String created;
     private String updated;
 
+    public Product(){}
+
+    public Product(String id){
+        this.id = id;
+    }
+
     public Product(String id, String category, String name, String cost, String description, int status, String image, String created, String updated) {
         this.id = id;
         this.category = category;

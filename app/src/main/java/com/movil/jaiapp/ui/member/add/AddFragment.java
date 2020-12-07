@@ -3,6 +3,7 @@ package com.movil.jaiapp.ui.member.add;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,6 +33,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,6 +49,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.movil.jaiapp.MainMemberActivity;
 import com.movil.jaiapp.R;
 import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
@@ -57,6 +60,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class AddFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener{
 
@@ -65,6 +70,7 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
     public static final int REQUEST_TAKE_PHOTO = 1;
     public static final int GALLERY_REQUEST_CODE = 105;
     private Uri contentUri;
+    private ProgressDialog progressDialog;
     private AddViewModel addViewModel;
     private ImageView imgViewProduct;
     private ImageButton imgBtnCamera, imgBtnGallery;
@@ -102,6 +108,8 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
     }
 
     private void initComponents(View root) {
+        progressDialog = new ProgressDialog(getContext());
+
         imgViewProduct = root.findViewById(R.id.member_frag_add_imgView_photoProduct);
         imgBtnCamera = root.findViewById(R.id.member_frag_add_imgBtn_camera);
         imgBtnGallery = root.findViewById(R.id.member_frag_add_imgBtn_gallery);
@@ -177,6 +185,7 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
 
         loadDataSpinner(spnCatP);
         strCategory = "";
+        imgViewProduct.setImageResource(R.drawable.icon_splash);
     }
 
     private void mValidate(){
@@ -201,29 +210,60 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
     }
 
     private void updateRegister(final UserMember user){
-        final StorageReference image = storageReference.child("pictures/" + imageName);
-        image.putFile(contentUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    mClean();
-                                    Toast.makeText(getContext(), "Producto agregado", Toast.LENGTH_SHORT).show();
-                                    getActivity().finish();
-                                }else{
-                                    mShowAlert("Error", "No se pudo guardar el registro");
-                                }
-                            }
-                        });
-                    }
-                });
+        progressDialog.setIcon(R.mipmap.ic_launcher);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.show();
 
-                Toast.makeText(getContext(), "Image Is Uploaded.", Toast.LENGTH_SHORT).show();
+        //referencia hacia el nodo padre de Storage
+        final StorageReference image = storageReference.child("pictures/" + imageName);
+        UploadTask uploadTask = image.putFile(contentUri);// insertas la foto en Storage.
+
+        //continuo con la operación para obtener la ruta de Storage
+        uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw Objects.requireNonNull(task.getException());
+                }
+                return image.getDownloadUrl(); //RETORNO LA  URL DE DESCARGA DE LA FOTO
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if(task.isSuccessful()){
+                    Uri uri = task.getResult();  //AQUI YA TENGO LA RUTA DE LA FOTO LISTA PARA INSERTRLA EN DATABASE
+                    assert uri != null;
+
+                    if(switchP.isChecked()){
+                        statusP = 1;
+                    }else{
+                        statusP = 0;
+                    }
+                    Product product = new Product(
+                            etIdP.getText().toString().trim(),
+                            strCategory,
+                            etNameP.getText().toString().trim(),
+                            etCostP.getText().toString().trim(),
+                            etDescP.getText().toString().trim(),
+                            statusP,
+                            uri.toString(),
+                            new Date().toString(),
+                            ""
+                    );
+                    userData.getProductsList().add(product);
+                    databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                mClean();
+                                Toast.makeText(getContext(), "Producto agregado", Toast.LENGTH_SHORT).show();
+                            }else{
+                                mShowAlert("Error", "No se pudo guardar el registro");
+                            }
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -296,23 +336,6 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
                         !etCostP.getText().toString().trim().isEmpty() && !etDescP.getText().toString().trim().isEmpty()){
                     if(!strCategory.equals("")){
                         if(!imageName.equals("") && contentUri != null){
-                            if(switchP.isChecked()){
-                                statusP = 1;
-                            }else{
-                                statusP = 0;
-                            }
-                            Product product = new Product(
-                                    etIdP.getText().toString().trim(),
-                                    strCategory,
-                                    etNameP.getText().toString().trim(),
-                                    etCostP.getText().toString().trim(),
-                                    etDescP.getText().toString().trim(),
-                                    statusP,
-                                    "",
-                                    new Date().toString(),
-                                    ""
-                            );
-                            userData.getProductsList().add(product);
                             updateRegister(userData);
                         }else{
                             Toast.makeText(getContext(), "Debe subir una foto del producto", Toast.LENGTH_SHORT).show();

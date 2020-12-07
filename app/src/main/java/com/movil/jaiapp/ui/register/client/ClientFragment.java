@@ -1,6 +1,7 @@
 package com.movil.jaiapp.ui.register.client;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -38,8 +39,10 @@ import java.util.UUID;
 public class ClientFragment extends Fragment implements View.OnClickListener {
 
     private ClientViewModel clientViewModel;
+    private ProgressDialog progressDialog;
     private Button btnRegister;
     private EditText etNumMember, etName, etLastname, etEmail, etPassword, etConfirmPassword;
+    private String imagePrb = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fzazsupercentro.com%2F%3Fattachment_id%3D2338&psig=AOvVaw0mNIC2HF31XkNKb4TZnSHz&ust=1607457787753000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJjppIbVvO0CFQAAAAAdAAAAABAD";
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
@@ -58,6 +61,8 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initComponents(View root) {
+        progressDialog = new ProgressDialog(getContext());
+
         etNumMember = root.findViewById(R.id.client_txtInputEdit_nMember);
         etName = root.findViewById(R.id.client_txtInputEdit_name);
         etLastname = root.findViewById(R.id.client_txtInputEdit_lastName);
@@ -103,6 +108,10 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
     }
 
     private void mRegisterUser(final String email, final String password) {
+        progressDialog.setIcon(R.mipmap.ic_launcher);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.show();
+
         databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -118,7 +127,7 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
                                     List<Product> sellerProductList = new ArrayList<>();
                                     sellerProductList = userMember.getProductsList();
                                     List<Product> wishProductList = new ArrayList<>();
-                                    Product product = new Product(UUID.randomUUID().toString());
+                                    Product product = new Product(UUID.randomUUID().toString(), imagePrb);
                                     wishProductList.add(product);
                                     UserClient userClient = new UserClient(
                                             UUID.randomUUID().toString(),
@@ -145,6 +154,7 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
                                             }else{
                                                 mShowAlert("Error", "Se ha producido un error en la conexión");
                                             }
+                                            progressDialog.dismiss();
                                         }
                                     });
 

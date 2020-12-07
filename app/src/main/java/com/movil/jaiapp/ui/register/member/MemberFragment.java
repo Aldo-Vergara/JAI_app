@@ -3,6 +3,7 @@ package com.movil.jaiapp.ui.register.member;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -67,11 +69,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class MemberFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback,
         GoogleMap.OnMarkerDragListener {
 
+    private ProgressDialog progressDialog;
     private MemberViewModel memberViewModel;
     public static final int CAMERA_PERM_CODE = 101;
     public static final int CAMERA_REQUEST_CODE = 102;
@@ -83,6 +87,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
     private ImageView imgViewProduct;
     private ImageButton imgBtnCamera, imgBtnGallery;
     private String currentPhotoPath, imageName = "";
+    private String imagePrb = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fzazsupercentro.com%2F%3Fattachment_id%3D2338&psig=AOvVaw0mNIC2HF31XkNKb4TZnSHz&ust=1607457787753000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJjppIbVvO0CFQAAAAAdAAAAABAD";
 
     private EditText etName, etLastname, etNumMember, etPhoneNumber, etEmail, etPassword, etConfirmPassword;
     double dLat = 0, dLong = 0;
@@ -116,6 +121,8 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
     }
 
     private void initComponents(View root) {
+        progressDialog = new ProgressDialog(getContext());
+
         imgViewProduct = root.findViewById(R.id.member_imgView_photoMember);
         imgBtnCamera = root.findViewById(R.id.member_imgBtn_camera);
         imgBtnGallery = root.findViewById(R.id.member_imgBtn_gallery);
@@ -173,53 +180,70 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
     }
 
     private void mRegisterUser(String email, String password) {
+        progressDialog.setIcon(R.mipmap.ic_launcher);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.show();
+
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
+                    //referencia hacia el nodo padre de Storage
                     final StorageReference image = storageReference.child("pictures/" + imageName);
-                    image.putFile(contentUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    List<Product> productList = new ArrayList<>();
-                                    Product product = new Product(UUID.randomUUID().toString());
-                                    productList.add(product);
-                                    UserMember userMember = new UserMember(
-                                            UUID.randomUUID().toString(),
-                                            etNumMember.getText().toString().trim(),
-                                            etName.getText().toString().trim(),
-                                            etLastname.getText().toString().trim(),
-                                            etPhoneNumber.getText().toString().trim(),
-                                            etEmail.getText().toString().trim(),
-                                            etPassword.getText().toString().trim(),
-                                            "",
-                                            productList,
-                                            dLat,
-                                            dLong,
-                                            "admin",
-                                            new Date().toString(),
-                                            "",
-                                            1
-                                    );
+                    UploadTask uploadTask = image.putFile(contentUri);// insertas la foto en Storage.
 
-                                    databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                mClean();
-                                                startActivity(new Intent(getContext(), MainMemberActivity.class));
-                                                getActivity().finish();
-                                            } else {
-                                                mShowAlert("Error", "Se ha producido un error en la conexión");
-                                            }
+                    //continuo con la operación para obtener la ruta de Storage
+                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw Objects.requireNonNull(task.getException());
+                            }
+                            return image.getDownloadUrl(); //RETORNO LA  URL DE DESCARGA DE LA FOTO
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if(task.isSuccessful()){
+                                Uri uri = task.getResult();  //AQUI YA TENGO LA RUTA DE LA FOTO LISTA PARA INSERTRLA EN DATABASE
+                                assert uri != null;
+
+                                List<Product> productList = new ArrayList<>();
+                                Product product = new Product(UUID.randomUUID().toString(), imagePrb);
+                                productList.add(product);
+                                UserMember userMember = new UserMember(
+                                        UUID.randomUUID().toString(),
+                                        etNumMember.getText().toString().trim(),
+                                        etName.getText().toString().trim(),
+                                        etLastname.getText().toString().trim(),
+                                        etPhoneNumber.getText().toString().trim(),
+                                        etEmail.getText().toString().trim(),
+                                        etPassword.getText().toString().trim(),
+                                        uri.toString(),
+                                        productList,
+                                        dLat,
+                                        dLong,
+                                        "admin",
+                                        new Date().toString(),
+                                        "",
+                                        1
+                                );
+
+                                databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            mClean();
+                                            startActivity(new Intent(getContext(), MainMemberActivity.class));
+                                            getActivity().finish();
+                                        } else {
+                                            mShowAlert("Error", "Se ha producido un error en la conexión");
                                         }
-                                    });
-                                }
-                            });
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                            }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override

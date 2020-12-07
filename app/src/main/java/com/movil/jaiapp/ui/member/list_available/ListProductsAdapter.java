@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -78,20 +79,14 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
     public void onBindViewHolder(final ListProductsViewHolder viewHolder, final int i) {
         loadImgView(viewHolder, i);
         viewHolder.textViewName.setText(productList.get(i).getName());
-        viewHolder.textViewDescription.setText("Descripción" + productList.get(i).getDescription());
+        viewHolder.textViewDescription.setText("Descripción: " + productList.get(i).getDescription());
         viewHolder.textViewCost.setText("$" + productList.get(i).getCost());
         loadStatusProduct(viewHolder, i);
         eventImgButtonDelete(viewHolder, i);
     }
 
     public void loadImgView(ListProductsViewHolder viewHolder, int i){
-        try{
-            File photoFile = new File(productList.get(i).getImage());
-            Uri uriFoto = FileProvider.getUriForFile(null, "com.movil.jaiapp.android.fileprovider", photoFile);
-            viewHolder.imgViewProduct.setImageURI(uriFoto);
-        }catch (Exception ex){
-            Toast.makeText(null, "No se encontro la imagen", Toast.LENGTH_SHORT).show();
-        }
+        Glide.with(activity).load(productList.get(i).getImage()).into(viewHolder.imgViewProduct);
     }
 
     private void loadStatusProduct(final ListProductsViewHolder viewHolder, final int i) {

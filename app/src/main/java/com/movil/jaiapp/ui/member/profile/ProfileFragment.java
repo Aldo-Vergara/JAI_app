@@ -1,23 +1,24 @@
 package com.movil.jaiapp.ui.member.profile;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +32,8 @@ import com.movil.jaiapp.models.UserMember;
 public class ProfileFragment extends Fragment implements View.OnClickListener{
 
     private ProfileViewModel profileViewModel;
-    
+    private ProgressDialog progressDialog;
+    private ImageView imgViewProfile;
     private EditText etName, etLastname, etNMember, etPhone, etEmail, etPassword, etNewPassword;
     private Button btnUpdate;
     private FirebaseDatabase firebaseDatabase;
@@ -53,6 +55,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
     private void initComponents(View root) {
+        progressDialog = new ProgressDialog(getContext());
+
+        imgViewProfile = root.findViewById(R.id.member_frag_profile_imgView_photoMember);
         etName = root.findViewById(R.id.member_frag_profile_txtInputEdit_name);
         etLastname = root.findViewById(R.id.member_frag_profile_txtInputEdit_lastName);
         etNMember = root.findViewById(R.id.member_frag_profile_txtInputEdit_numMember);
@@ -95,6 +100,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
     private void setData(UserMember userData) {
+        Glide.with(getActivity()).load(userData.getImage()).centerCrop().into(imgViewProfile);
         etName.setText(userData.getName());
         etLastname.setText(userData.getLastname());
         etNMember.setText(userData.getNumMember());
@@ -113,6 +119,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
     private void updateRegister(final UserMember user){
+        progressDialog.setIcon(R.mipmap.ic_launcher);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.show();
         databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -123,6 +132,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 }else{
                     mShowAlert("Error", "No se pudo actualizar la información");
                 }
+                progressDialog.dismiss();
             }
         });
     }

@@ -28,6 +28,22 @@
                 android:layout_gravity="center"
                 android:src="@drawable/icon_splash" />
 
+            <TextView
+                android:id="@+id/client_frag_contact_txtView_nameMember"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/client_frag_contact_txtView_phoneMember"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="20dp" />
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

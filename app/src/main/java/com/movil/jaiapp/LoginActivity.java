@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private Button btnSignUp, btnRegister;
     private EditText etEmail, etPassword;
+    private ProgressDialog progressDialog;
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReferenceClient;
@@ -50,6 +52,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initComponents() {
+        progressDialog = new ProgressDialog(this);
+
         btnSignUp = findViewById(R.id.login_btn_signUp);
         btnRegister = findViewById(R.id.login_btn_register);
 
@@ -92,6 +96,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             etEmail.getText().toString().trim(),
                             etPassword.getText().toString().trim());
 
+                    progressDialog.setIcon(R.mipmap.ic_launcher);
+                    progressDialog.setMessage("Cargando...");
+                    progressDialog.show();
+
                     firebaseAuth.addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -104,6 +112,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             if(etEmail.getText().toString().trim().equals(userClient.getEmail())){
                                                 startActivity(new Intent(getApplicationContext(), MainClientActivity.class));
                                                 finish();
+                                                progressDialog.dismiss();
                                                 break;
                                             }
                                         }

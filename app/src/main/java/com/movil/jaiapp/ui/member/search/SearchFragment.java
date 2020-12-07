@@ -3,6 +3,7 @@ package com.movil.jaiapp.ui.member.search;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,6 +33,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -67,6 +69,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
     private Uri contentUri;
     private ImageView imgViewProduct;
     private ImageButton imgBtnCamera, imgBtnGallery;
+    private ProgressDialog progressDialog;
 
     private EditText etIdP, etNameP, etCostP, etDescP;
     private Spinner spnCatP;
@@ -104,6 +107,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
     }
 
     private void initComponents(View root) {
+        progressDialog = new ProgressDialog(getContext());
+
         imgViewProduct = root.findViewById(R.id.member_frag_search_imgView_photoProduct);
         imgBtnCamera = root.findViewById(R.id.member_frag_search_imgBtn_camera);
         imgBtnGallery = root.findViewById(R.id.member_frag_search_imgBtn_gallery);
@@ -158,6 +163,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
         etNameP.setText("");
         etCostP.setText("");
         etDescP.setText("");
+        imgViewProduct.setImageResource(R.drawable.icon_splash);
 
         loadDataSpinner(spnCatP);
         strCategory = "";
@@ -186,6 +192,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
     }
 
     private void updateRegister(final UserMember user){
+        progressDialog.setIcon(R.mipmap.ic_launcher);
+        progressDialog.setMessage("Cargando...");
+        progressDialog.show();
+
         final StorageReference image = storageReference.child("pictures/" + imageName);
         image.putFile(contentUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -193,6 +203,19 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                 image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+                        userData.getProductsList().get(position).setId(etIdP.getText().toString().trim());
+                        userData.getProductsList().get(position).setCategory(strCategory);
+                        userData.getProductsList().get(position).setName(etNameP.getText().toString().trim());
+                        userData.getProductsList().get(position).setCost(etCostP.getText().toString().trim());
+                        userData.getProductsList().get(position).setDescription(etDescP.getText().toString().trim());
+                        if(switchP.isChecked()){
+                            statusP = 1;
+                        }else{
+                            statusP = 0;
+                        }
+                        userData.getProductsList().get(position).setStatus(statusP);
+                        userData.getProductsList().get(position).setImage(uri.toString());
+
                         databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -203,6 +226,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                                 }else{
                                     mShowAlert("Error", "No se pudo actualizar el registro");
                                 }
+                                progressDialog.dismiss();
                             }
                         });
                     }
@@ -317,6 +341,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                             etNameP.setText(userData.getProductsList().get(i).getName());
                             etCostP.setText(userData.getProductsList().get(i).getCost());
                             etDescP.setText(userData.getProductsList().get(i).getDescription());
+                            Glide.with(getActivity()).load(userData.getProductsList().get(i).getImage()).centerCrop().into(imgViewProduct);
+
                             if(userData.getProductsList().get(i).getStatus() == 1){
                                 switchP.setChecked(true);
                             }else{
@@ -346,17 +372,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                     if(!etIdP.getText().toString().trim().isEmpty() && !etNameP.getText().toString().trim().isEmpty() &&
                             !etCostP.getText().toString().trim().isEmpty() && !etDescP.getText().toString().trim().isEmpty()){
                         if(!strCategory.equals("")){
-                            userData.getProductsList().get(position).setId(etIdP.getText().toString().trim());
-                            userData.getProductsList().get(position).setCategory(strCategory);
-                            userData.getProductsList().get(position).setName(etNameP.getText().toString().trim());
-                            userData.getProductsList().get(position).setCost(etCostP.getText().toString().trim());
-                            userData.getProductsList().get(position).setDescription(etDescP.getText().toString().trim());
-                            if(switchP.isChecked()){
-                                statusP = 1;
-                            }else{
-                                statusP = 0;
-                            }
-                            userData.getProductsList().get(position).setStatus(statusP);
+
                             updateRegister(userData);
                         }else{
                             Toast.makeText(getContext(), "Debe seleccionar una categoría", Toast.LENGTH_SHORT).show();

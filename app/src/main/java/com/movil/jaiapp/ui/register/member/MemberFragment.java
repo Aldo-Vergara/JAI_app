@@ -92,12 +92,9 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
     private ImageView imgViewProduct;
     private ImageButton imgBtnCamera, imgBtnGallery;
     private String currentPhotoPath, imageName = "";
-<<<<<<< HEAD
     private String imagePrb = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fzazsupercentro.com%2F%3Fattachment_id%3D2338&psig=AOvVaw0mNIC2HF31XkNKb4TZnSHz&ust=1607457787753000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJjppIbVvO0CFQAAAAAdAAAAABAD";
 
-=======
     private int contador = 0;
->>>>>>> df19d24a0652baceeb531acd61a56fec27745b8e
     private EditText etName, etLastname, etNumMember, etPhoneNumber, etEmail, etPassword, etConfirmPassword;
     double dLat = 0, dLong = 0;
     private Marker markerUbication, ubicacion;

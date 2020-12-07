@@ -5,9 +5,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -22,6 +25,7 @@ import androidx.lifecycle.ViewModelProviders;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -43,6 +47,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -87,14 +92,18 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
     private ImageView imgViewProduct;
     private ImageButton imgBtnCamera, imgBtnGallery;
     private String currentPhotoPath, imageName = "";
+<<<<<<< HEAD
     private String imagePrb = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fzazsupercentro.com%2F%3Fattachment_id%3D2338&psig=AOvVaw0mNIC2HF31XkNKb4TZnSHz&ust=1607457787753000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJjppIbVvO0CFQAAAAAdAAAAABAD";
 
+=======
+    private int contador = 0;
+>>>>>>> df19d24a0652baceeb531acd61a56fec27745b8e
     private EditText etName, etLastname, etNumMember, etPhoneNumber, etEmail, etPassword, etConfirmPassword;
     double dLat = 0, dLong = 0;
-    private Marker markerUbication;
+    private Marker markerUbication, ubicacion;
     private Button btnRegister;
     private MapView mapView;
-
+    private GoogleMap mMap;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
@@ -347,7 +356,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == CAMERA_PERM_CODE){
+        if(requestCode == REQUEST_TAKE_PHOTO){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 //openCamera();
                 dispatchTakePictureIntent();
@@ -360,7 +369,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == CAMERA_REQUEST_CODE){
+        if(requestCode == REQUEST_TAKE_PHOTO){
             if(requestCode == Activity.RESULT_OK){
                 File file = new File(currentPhotoPath);
                 imgViewProduct.setImageURI(Uri.fromFile(file));
@@ -398,23 +407,36 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CHECK_SETTINGS);
-        }else{
-
-            LatLng ubication = new LatLng(19.067577, -99.383843);
-            markerUbication = googleMap.addMarker(new MarkerOptions()
-                    .position(ubication)
-                    .title("Tu ubicación")
-                    .draggable(true)
-            );
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubication, 7));
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
-            googleMap.setOnMarkerDragListener(this);
-            googleMap.setMyLocationEnabled(true);
         }
+
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mMap.setMyLocationEnabled(true);
+            LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            LocationListener locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if(contador == 0 ){
+                        LatLng miUbicacion = new LatLng(location.getLatitude(), location.getLongitude());
+                        markerUbication =  mMap.addMarker(new MarkerOptions().position(miUbicacion).title("ubicacion actual").draggable(true));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(miUbicacion));
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(miUbicacion)
+                                .zoom(14)
+                                .bearing(90)
+                                .tilt(45)
+                                .build();
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        contador = 1;
+                    }
+                }
+            };
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            mMap.setOnMarkerDragListener(this);
     }
 
     @Override

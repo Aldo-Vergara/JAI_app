@@ -1,24 +1,40 @@
 package com.movil.jaiapp.ui.member.search;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,28 +44,44 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.movil.jaiapp.R;
 import com.movil.jaiapp.models.UserMember;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SearchFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener{
 
     private SearchViewModel searchViewModel;
+    public static final int CAMERA_PERM_CODE = 101;
+    public static final int CAMERA_REQUEST_CODE = 102;
+    public static final int REQUEST_TAKE_PHOTO = 1;
+    public static final int GALLERY_REQUEST_CODE = 105;
+    private Uri contentUri;
+    private ImageView imgViewProduct;
+    private ImageButton imgBtnCamera, imgBtnGallery;
+
     private EditText etIdP, etNameP, etCostP, etDescP;
     private Spinner spnCatP;
     private Switch switchP;
     private Button btnUpdate, btnDelete, btnClean;
     private ImageButton imgBtnSearch;
     private int statusP, position;
-    private String strCategory;
+    private String strCategory, currentPhotoPath, imageName = "";
     static int flag = 0;
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseUser user;
     private UserMember userData;
+    private StorageReference storageReference;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -68,9 +100,16 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
         firebaseDatabase = FirebaseDatabase.getInstance();
         //firebaseDatabase.setPersistenceEnabled(true);
         databaseReference = firebaseDatabase.getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
     }
 
     private void initComponents(View root) {
+        imgViewProduct = root.findViewById(R.id.member_frag_search_imgView_photoProduct);
+        imgBtnCamera = root.findViewById(R.id.member_frag_search_imgBtn_camera);
+        imgBtnGallery = root.findViewById(R.id.member_frag_search_imgBtn_gallery);
+        imgBtnCamera.setOnClickListener(this);
+        imgBtnGallery.setOnClickListener(this);
+
         etIdP = root.findViewById(R.id.member_frag_search_txtEdit_id);
         etNameP = root.findViewById(R.id.member_frag_search_txtEdit_name);
         etCostP = root.findViewById(R.id.member_frag_search_txtEdit_cost);
@@ -147,16 +186,34 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
     }
 
     private void updateRegister(final UserMember user){
-        databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+        final StorageReference image = storageReference.child("pictures/" + imageName);
+        image.putFile(contentUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    mClean();
-                    Toast.makeText(getContext(), "Producto actualizado correctamente", Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }else{
-                    mShowAlert("Error", "No se pudo actualizar el registro");
-                }
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    mClean();
+                                    Toast.makeText(getContext(), "Producto actualizado correctamente", Toast.LENGTH_SHORT).show();
+                                    getActivity().finish();
+                                }else{
+                                    mShowAlert("Error", "No se pudo actualizar el registro");
+                                }
+                            }
+                        });
+                    }
+                });
+
+                Toast.makeText(getContext(), "Image Is Uploaded.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                mShowAlert("Error en la imagen", "No se pudo subir la imagen al servidor");
             }
         });
     }
@@ -194,9 +251,59 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
         return posicion;
     }
 
+    private void askCameraPermissions() {
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, CAMERA_PERM_CODE);
+        }else{
+            //openCamera();
+            dispatchTakePictureIntent();
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "MOBSHOP_" + timeStamp + "_";
+        //File fileStorageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File fileStorageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", fileStorageDir);
+
+        currentPhotoPath = image.getAbsolutePath();
+        return  image;
+    }
+
+    private void dispatchTakePictureIntent(){
+        Intent intentTakePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(intentTakePicture.resolveActivity(getActivity().getPackageManager()) != null){
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            }catch (IOException ex){
+                mShowAlert("Error en camára", "No se pudo tomar la foto");
+            }
+            if(photoFile != null){
+                Uri photoUri= FileProvider.getUriForFile(getContext(), "com.movil.jaiapp.android.fileprovider", photoFile);
+                intentTakePicture.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(intentTakePicture, CAMERA_REQUEST_CODE);
+            }
+        }
+    }
+
+    private String getFileExt(Uri contentUri) {
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(contentResolver.getType(contentUri));
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+            case R.id.member_frag_search_imgBtn_camera:
+                askCameraPermissions();
+                break;
+            case R.id.member_frag_search_imgBtn_gallery:
+                Intent gallery = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(gallery, GALLERY_REQUEST_CODE);
+                break;
             case R.id.member_frag_search_imgBtn_search:
                 if(!etIdP.getText().toString().trim().isEmpty()){
                     boolean exist = true;
@@ -276,5 +383,50 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == CAMERA_PERM_CODE){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                //openCamera();
+                dispatchTakePictureIntent();
+            }else{
+                Toast.makeText(getContext(), "Se requiere permiso para usar la cámara", Toast.LENGTH_SHORT).show();
+            }
+        }
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == CAMERA_REQUEST_CODE){
+            if(requestCode == Activity.RESULT_OK){
+                File file = new File(currentPhotoPath);
+                imgViewProduct.setImageURI(Uri.fromFile(file));
+                Intent intentMediaScan = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri uri = Uri.fromFile(file);
+                intentMediaScan.setData(uri);
+                getActivity().sendBroadcast(intentMediaScan);
+
+                imageName = file.getName();
+                contentUri = uri;
+                //uploadImageToFirebase(file.getName(),contentUri);
+            }
+        }
+
+        if(requestCode == GALLERY_REQUEST_CODE){
+            if(resultCode == Activity.RESULT_OK){
+                Uri uri = data.getData();
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "MOBSHOP_" + timeStamp +"."+getFileExt(uri);
+                imgViewProduct.setImageURI(uri);
+
+                imageName = imageFileName;
+                contentUri = uri;
+                //uploadImageToFirebase(imageFileName, contentUri);
+            }
+        }
+        //super.onActivityResult(requestCode, resultCode, data);
     }
 }

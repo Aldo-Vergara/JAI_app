@@ -43,6 +43,13 @@
                     android:background="#ffd5d5d5" />
 
                 <TextView
+                    android:id="@+id/member_card_view_txtView_descProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Small Text"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
                     android:id="@+id/member_card_view_txtView_costProduct"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -7,6 +7,7 @@
     tools:context=".ui.register.member.MemberFragment">
 
     <ScrollView
+        android:id="@+id/member_scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
@@ -16,8 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,11 +26,36 @@
 
             <ImageView
                 android:id="@+id/member_imgView_photoMember"
-                android:layout_width="match_parent"
-                android:layout_height="175dp"
+                android:layout_width="175dp"
+                android:layout_height="171dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:contentDescription="@string/str_all"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:src="@drawable/icon_splash" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/member_imgBtn_camera"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:src="@drawable/ic_add_photo" />
+
+                <ImageButton
+                    android:id="@+id/member_imgBtn_gallery"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:src="@drawable/ic_add_image" />
+            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -41,9 +66,9 @@
                     android:id="@+id/member_txtInputEdit_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
                     android:drawableLeft="@drawable/ic_person"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -55,9 +80,9 @@
                     android:id="@+id/member_txtInputEdit_lastName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
                     android:drawableLeft="@drawable/ic_person"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -69,9 +94,9 @@
                     android:id="@+id/member_txtInputEdit_numMember"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
                     android:drawableLeft="@drawable/ic_pin"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -83,9 +108,9 @@
                     android:id="@+id/member_txtInputEdit_phoneNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"
                     android:drawableLeft="@drawable/ic_phone"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:inputType="phone" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -97,9 +122,9 @@
                     android:id="@+id/member_txtInputEdit_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
                     android:drawableLeft="@drawable/ic_email"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -111,9 +136,9 @@
                     android:id="@+id/member_txtInputEdit_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"
                     android:drawableLeft="@drawable/ic_security"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -125,9 +150,9 @@
                     android:id="@+id/member_txtInputEdit_confirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"
                     android:drawableLeft="@drawable/ic_security"
-                    android:drawablePadding="10dp"/>
+                    android:drawablePadding="10dp"
+                    android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.gms.maps.MapView
@@ -136,7 +161,7 @@
                 android:layout_height="300dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                tools:layout_editor_absoluteY="8dp"/>
+                tools:layout_editor_absoluteY="8dp" />
 
             <Button
                 android:id="@+id/member_btn_register"

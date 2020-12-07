@@ -21,9 +21,33 @@
             android:layout_width="175dp"
             android:layout_height="171dp"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:contentDescription="@string/str_all"
             android:foreground="?android:attr/selectableItemBackground"
             android:src="@drawable/icon_splash" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/member_frag_add_imgBtn_camera"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_add_photo" />
+
+            <ImageButton
+                android:id="@+id/member_frag_add_imgBtn_gallery"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:src="@drawable/ic_add_image" />
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

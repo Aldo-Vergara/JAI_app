@@ -74,7 +74,7 @@ public class WishProductsAdapter extends RecyclerView.Adapter<WishProductsAdapte
     @Override
     public void onBindViewHolder(final WishProductsViewHolder viewHolder, final int i) {
         loadImgView(viewHolder, i);
-        viewHolder.textViewID.setText(productList.get(i).getId());
+        viewHolder.textViewID.setText("ID: " + productList.get(i).getId());
         viewHolder.textViewName.setText(productList.get(i).getName());
         viewHolder.textViewDescription.setText("Descripción: " + productList.get(i).getDescription());
         viewHolder.textViewCost.setText("$" + productList.get(i).getCost());

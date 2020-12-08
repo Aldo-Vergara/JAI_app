@@ -178,7 +178,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
         dialog.show();
     }
 
-    private void mRegisterUser(String email, String password) {
+    private void mRegisterUser(final String email, final String password) {
         progressDialog.setIcon(R.mipmap.ic_launcher);
         progressDialog.setMessage("Cargando...");
         progressDialog.show();
@@ -211,7 +211,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                                 List<Product> productList = new ArrayList<>();
                                 Product product = new Product(UUID.randomUUID().toString(), imagePrb);
                                 productList.add(product);
-                                UserMember userMember = new UserMember(
+                                final UserMember userMember = new UserMember(
                                         UUID.randomUUID().toString(),
                                         etNumMember.getText().toString().trim(),
                                         etName.getText().toString().trim(),
@@ -234,27 +234,28 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         boolean b = false;
                                         for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
-                                            final UserMember userMember = objSnaptshot.getValue(UserMember.class);
-                                            if(!etNumMember.getText().toString().trim().equals(userMember.getNumMember())){
-                                                databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            mClean();
-                                                            startActivity(new Intent(getContext(), MainMemberActivity.class));
-                                                            getActivity().finish();
-                                                        } else {
-                                                            mShowAlert("Error", "Se ha producido un error en la conexión");
-                                                        }
-                                                    }
-                                                });
+                                            final UserMember user = objSnaptshot.getValue(UserMember.class);
+                                            if(!etNumMember.getText().toString().trim().equals(user.getNumMember())){
                                                 b = false;
-                                                break;
                                             }else{
                                                 b = true;
+                                                break;
                                             }
                                         }
-                                        if(b){
+                                        if(!b){
+                                            databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        mClean();
+                                                        startActivity(new Intent(getContext(), MainMemberActivity.class));
+                                                        getActivity().finish();
+                                                    } else {
+                                                        mShowAlert("Error", "Se ha producido un error en la conexión");
+                                                    }
+                                                }
+                                            });
+                                        }else{
                                             etNumMember.setError("El número de socio ingresado ya existe");
                                         }
                                     }

@@ -63,7 +63,7 @@ public class HomeProductsAdapter extends RecyclerView.Adapter<HomeProductsAdapte
         loadImgView(viewHolder, i);
         viewHolder.textViewName.setText(productList.get(i).getName());
         viewHolder.textViewCost.setText("$" + productList.get(i).getCost());
-        viewHolder.textViewID.setText("$" + productList.get(i).getId());
+        viewHolder.textViewID.setText("ID: " + productList.get(i).getId());
         eventImgButtonFavorite(viewHolder, i);
     }
 

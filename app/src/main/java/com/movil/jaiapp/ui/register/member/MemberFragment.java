@@ -183,66 +183,66 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
         progressDialog.setMessage("Cargando...");
         progressDialog.show();
 
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                if (task.isSuccessful()) {
-                    //referencia hacia el nodo padre de Storage
-                    final StorageReference image = storageReference.child("pictures/" + imageName);
-                    UploadTask uploadTask = image.putFile(contentUri);// insertas la foto en Storage.
-
-                    //continuo con la operación para obtener la ruta de Storage
-                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean b = false;
+                for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
+                    final UserMember user = objSnaptshot.getValue(UserMember.class);
+                    if(!etNumMember.getText().toString().trim().equals(user.getNumMember())){
+                        b = false;
+                    }else{
+                        b = true;
+                        break;
+                    }
+                }
+                if(!b){
+                    firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
-                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                throw Objects.requireNonNull(task.getException());
-                            }
-                            return image.getDownloadUrl(); //RETORNO LA  URL DE DESCARGA DE LA FOTO
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if(task.isSuccessful()){
-                                Uri uri = task.getResult();  //AQUI YA TENGO LA RUTA DE LA FOTO LISTA PARA INSERTRLA EN DATABASE
-                                assert uri != null;
+                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-                                List<Product> productList = new ArrayList<>();
-                                Product product = new Product(UUID.randomUUID().toString(), imagePrb);
-                                productList.add(product);
-                                final UserMember userMember = new UserMember(
-                                        UUID.randomUUID().toString(),
-                                        etNumMember.getText().toString().trim(),
-                                        etName.getText().toString().trim(),
-                                        etLastname.getText().toString().trim(),
-                                        etPhoneNumber.getText().toString().trim(),
-                                        etEmail.getText().toString().trim(),
-                                        etPassword.getText().toString().trim(),
-                                        uri.toString(),
-                                        productList,
-                                        dLat,
-                                        dLong,
-                                        "admin",
-                                        new Date().toString(),
-                                        "",
-                                        1
-                                );
+                            if (task.isSuccessful()) {
+                                //referencia hacia el nodo padre de Storage
+                                final StorageReference image = storageReference.child("pictures/" + imageName);
+                                UploadTask uploadTask = image.putFile(contentUri);// insertas la foto en Storage.
 
-                                databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
+                                //continuo con la operación para obtener la ruta de Storage
+                                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        boolean b = false;
-                                        for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
-                                            final UserMember user = objSnaptshot.getValue(UserMember.class);
-                                            if(!etNumMember.getText().toString().trim().equals(user.getNumMember())){
-                                                b = false;
-                                            }else{
-                                                b = true;
-                                                break;
-                                            }
+                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                        if (!task.isSuccessful()) {
+                                            throw Objects.requireNonNull(task.getException());
                                         }
-                                        if(!b){
+                                        return image.getDownloadUrl(); //RETORNO LA  URL DE DESCARGA DE LA FOTO
+                                    }
+                                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if(task.isSuccessful()){
+                                            Uri uri = task.getResult();  //AQUI YA TENGO LA RUTA DE LA FOTO LISTA PARA INSERTRLA EN DATABASE
+                                            assert uri != null;
+
+                                            List<Product> productList = new ArrayList<>();
+                                            Product product = new Product(UUID.randomUUID().toString(), imagePrb);
+                                            productList.add(product);
+                                            UserMember userMember = new UserMember(
+                                                    UUID.randomUUID().toString(),
+                                                    etNumMember.getText().toString().trim(),
+                                                    etName.getText().toString().trim(),
+                                                    etLastname.getText().toString().trim(),
+                                                    etPhoneNumber.getText().toString().trim(),
+                                                    etEmail.getText().toString().trim(),
+                                                    etPassword.getText().toString().trim(),
+                                                    uri.toString(),
+                                                    productList,
+                                                    dLat,
+                                                    dLong,
+                                                    "admin",
+                                                    new Date().toString(),
+                                                    "",
+                                                    1
+                                            );
+
                                             databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
@@ -255,31 +255,33 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                                                     }
                                                 }
                                             });
-                                        }else{
-                                            etNumMember.setError("El número de socio ingresado ya existe");
                                         }
+                                        progressDialog.dismiss();
                                     }
-
+                                }).addOnFailureListener(new OnFailureListener() {
                                     @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                    public void onFailure(@NonNull Exception e) {
+                                        mShowAlert("Error en la imagen", "No se pudo subir la imagen al servidor");
                                     }
                                 });
+
+                            } else {
+                                mShowAlert("Error", "Se ha producido un error al crear el usuario");
                             }
-                            progressDialog.dismiss();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            mShowAlert("Error en la imagen", "No se pudo subir la imagen al servidor");
                         }
                     });
-
-                } else {
-                    mShowAlert("Error", "Se ha producido un error al crear el usuario");
+                }else{
+                    etNumMember.setError("El número de socio ingresado ya existe");
                 }
             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
         });
+
+
     }
 
     private void askCameraPermissions() {

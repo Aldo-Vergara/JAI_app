@@ -122,13 +122,13 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
 
     private void eventImgButtonDelete(ListProductsViewHolder viewHolder, final int i) {
         if(isListAvailable) {
-            progressDialog.setIcon(R.mipmap.ic_launcher);
-            progressDialog.setMessage("Actualizando...");
-            progressDialog.show();
-
             viewHolder.imgBtnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    progressDialog.setIcon(R.mipmap.ic_launcher);
+                    progressDialog.setMessage("Actualizando...");
+                    progressDialog.show();
+
                     databaseReference.child("UserMember").child(userMember.getId()).child("productsList").child(String.valueOf(i+1)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {

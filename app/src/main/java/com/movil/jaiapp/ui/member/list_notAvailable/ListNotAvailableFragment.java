@@ -80,7 +80,7 @@ public class ListNotAvailableFragment extends Fragment {
                         layoutManager = new LinearLayoutManager(getContext());
                         recyclerView.setLayoutManager(layoutManager);
 
-                        ArrayList<Product> listProducts = null;
+                        ArrayList<Product> listProducts = new ArrayList<>();
                         for(int j = 0; j < userData.getProductsList().size(); j++){
                             if(userData.getProductsList().get(j).getStatus() == 0){
                                 listProducts.add(userData.getProductsList().get(j));

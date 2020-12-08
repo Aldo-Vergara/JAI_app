@@ -60,7 +60,7 @@ public class WishListFragment extends Fragment {
     private void initComponents(View root) {
         progressDialog = new ProgressDialog(getContext());
 
-        recyclerView = root.findViewById(R.id.member_frag_list_recyclerView_notAvailable);
+        recyclerView = root.findViewById(R.id.client_frag_recyclerView_wishList);
         recyclerView.setHasFixedSize(true);
     }
 

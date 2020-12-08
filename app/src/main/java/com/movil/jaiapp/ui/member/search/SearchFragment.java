@@ -386,6 +386,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                                 }
                             }
                             if(!exist){
+                                File file = new File(currentPhotoPath);
+                                contentUri = Uri.fromFile(file);
                                 updateRegister(userData);
                             }else{
                                 Toast.makeText(getContext(), "El ID del producto ingresado ya existe", Toast.LENGTH_SHORT).show();

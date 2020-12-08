@@ -9,6 +9,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,13 +24,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.R;
+import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserClient;
 import com.movil.jaiapp.models.UserMember;
+
+import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
-    private RecyclerView.LayoutManager layoutManager;
+    private GridLayoutManager gridLayoutManager;
+    //private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
 
@@ -106,8 +112,17 @@ public class HomeFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
+                    gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                    recyclerView.setLayoutManager(gridLayoutManager);
 
-                    adapter = new HomeProductsAdapter(user.getSellerProductsList(), getActivity());
+                    ArrayList<Product> listProducts = new ArrayList<>();
+                    for(int j = 0; j < user.getSellerProductsList().size(); j++){
+                        if(user.getSellerProductsList().get(j).getStatus() == 1){
+                            listProducts.add(user.getSellerProductsList().get(j));
+                        }
+                    }
+
+                    adapter = new HomeProductsAdapter(listProducts, getActivity());
                     recyclerView.setAdapter(adapter);
                 }else{
                     Toast.makeText(getContext(), "No se pudo actualizar la lista de productos", Toast.LENGTH_SHORT).show();

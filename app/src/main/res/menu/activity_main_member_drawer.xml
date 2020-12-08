@@ -24,5 +24,9 @@
             android:id="@+id/nav_not_available_product"
             android:icon="@drawable/ic_inactive_product"
             android:title="@string/menu_member_not_available" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info"
+            android:title="@string/about" />
     </group>
 </menu>

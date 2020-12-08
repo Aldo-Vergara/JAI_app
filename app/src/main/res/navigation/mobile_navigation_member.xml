@@ -35,4 +35,10 @@
         android:name="com.movil.jaiapp.ui.member.list_notAvailable.ListNotAvailableFragment"
         android:label="@string/menu_member_not_available"
         tools:layout="@layout/fragment_member_list_not_available" />
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.movil.jaiapp.ui.about.AboutFragment"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about" />
 </navigation>

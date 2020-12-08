@@ -46,6 +46,7 @@
     <string name="menu_member_search">Buscar Producto</string>
     <string name="menu_member_available">Productos disponibles</string>
     <string name="menu_member_not_available">Productos agotados</string>
+    <string name="about">Acerca de</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

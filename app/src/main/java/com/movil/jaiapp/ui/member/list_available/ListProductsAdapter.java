@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -18,11 +19,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.R;
 import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -97,25 +102,39 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
         }else{
             viewHolder.statusSwitch.setChecked(false);
         }
+        final ArrayList<Product> products = (ArrayList<Product>) userMember.getProductsList();
+
         viewHolder.statusSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    userMember.getProductsList().get(i).setStatus(1);
-                }else{
-                    userMember.getProductsList().get(i).setStatus(0);
+                boolean band = false;
+                for(int k = 0; k < products.size(); k++){
+                    if(userMember.getProductsList().get(k).getId().equals(productList.get(i).getId()) &&
+                            products.get(k).getCreated() != null){
+                        if(b){
+                            userMember.getProductsList().get(k).setStatus(1);
+                        }else{
+                            userMember.getProductsList().get(k).setStatus(0);
+                        }
+                        band = true;
+                        break;
+                    }else{
+                        band = false;
+                    }
                 }
 
-                databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-
-                        }else{
-                            mShowAlert("Error", "No se pudo cambiar el estatus");
+                if(band){
+                    databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(activity, "Cambio el estado del producto", Toast.LENGTH_SHORT).show();
+                            }else{
+                                mShowAlert("Error", "No se pudo cambiar el estatus");
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
     }
@@ -126,20 +145,22 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
                 @Override
                 public void onClick(View view) {
                     progressDialog.setIcon(R.mipmap.ic_launcher);
-                    progressDialog.setMessage("Actualizando...");
+                    progressDialog.setMessage("Borrando...");
                     progressDialog.show();
 
-                    databaseReference.child("UserMember").child(userMember.getId()).child("productsList").child(String.valueOf(i+1)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    databaseReference.child("UserMember").child(userMember.getId()).child("productsList").child(String.valueOf(i)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-
+                                Toast.makeText(activity, "Se borro su producto", Toast.LENGTH_SHORT).show();
                             }else{
                                 mShowAlert("Error", "No se pudo eliminar el producto");
                             }
                             progressDialog.dismiss();
                         }
                     });
+
+
                 }
             });
         }else{

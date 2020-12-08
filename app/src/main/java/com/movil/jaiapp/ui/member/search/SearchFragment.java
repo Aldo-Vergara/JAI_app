@@ -196,50 +196,80 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
         progressDialog.setMessage("Cargando...");
         progressDialog.show();
 
-        final StorageReference image = storageReference.child("pictures/" + imageName);
-        image.putFile(contentUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        userData.getProductsList().get(position).setId(etIdP.getText().toString().trim());
-                        userData.getProductsList().get(position).setCategory(strCategory);
-                        userData.getProductsList().get(position).setName(etNameP.getText().toString().trim());
-                        userData.getProductsList().get(position).setCost(etCostP.getText().toString().trim());
-                        userData.getProductsList().get(position).setDescription(etDescP.getText().toString().trim());
-                        if(switchP.isChecked()){
-                            statusP = 1;
-                        }else{
-                            statusP = 0;
-                        }
-                        userData.getProductsList().get(position).setStatus(statusP);
-                        userData.getProductsList().get(position).setImage(uri.toString());
-
-                        databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    mClean();
-                                    Toast.makeText(getContext(), "Producto actualizado correctamente", Toast.LENGTH_SHORT).show();
-                                    getActivity().finish();
-                                }else{
-                                    mShowAlert("Error", "No se pudo actualizar el registro");
-                                }
-                                progressDialog.dismiss();
+        if(contentUri != null){
+            final StorageReference image = storageReference.child("pictures/" + imageName);
+            image.putFile(contentUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            userData.getProductsList().get(position).setId(etIdP.getText().toString().trim());
+                            userData.getProductsList().get(position).setCategory(strCategory);
+                            userData.getProductsList().get(position).setName(etNameP.getText().toString().trim());
+                            userData.getProductsList().get(position).setCost(etCostP.getText().toString().trim());
+                            userData.getProductsList().get(position).setDescription(etDescP.getText().toString().trim());
+                            if(switchP.isChecked()){
+                                statusP = 1;
+                            }else{
+                                statusP = 0;
                             }
-                        });
-                    }
-                });
+                            userData.getProductsList().get(position).setStatus(statusP);
+                            userData.getProductsList().get(position).setImage(uri.toString());
 
-                Toast.makeText(getContext(), "Image Is Uploaded.", Toast.LENGTH_SHORT).show();
+                            databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        mClean();
+                                        Toast.makeText(getContext(), "Producto actualizado correctamente", Toast.LENGTH_SHORT).show();
+                                        //getActivity().finish();
+                                    }else{
+                                        mShowAlert("Error", "No se pudo actualizar el registro");
+                                    }
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
+                    });
+
+                    Toast.makeText(getContext(), "Image Is Uploaded.", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    mShowAlert("Error en la imagen", "No se pudo subir la imagen al servidor");
+                }
+            });
+        }else{
+            userData.getProductsList().get(position).setId(etIdP.getText().toString().trim());
+            userData.getProductsList().get(position).setCategory(strCategory);
+            userData.getProductsList().get(position).setName(etNameP.getText().toString().trim());
+            userData.getProductsList().get(position).setCost(etCostP.getText().toString().trim());
+            userData.getProductsList().get(position).setDescription(etDescP.getText().toString().trim());
+            if(switchP.isChecked()){
+                statusP = 1;
+            }else{
+                statusP = 0;
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                mShowAlert("Error en la imagen", "No se pudo subir la imagen al servidor");
-            }
-        });
+            userData.getProductsList().get(position).setStatus(statusP);
+
+            databaseReference.child("UserMember").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        mClean();
+                        Toast.makeText(getContext(), "Producto actualizado correctamente", Toast.LENGTH_SHORT).show();
+                        //getActivity().finish();
+                    }else{
+                        mShowAlert("Error", "No se pudo actualizar el registro");
+                    }
+                    progressDialog.dismiss();
+                }
+            });
+        }
+
+
     }
 
     private void loadDataSpinner(final Spinner spn){
@@ -386,8 +416,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                                 }
                             }
                             if(!exist){
-                                File file = new File(currentPhotoPath);
-                                contentUri = Uri.fromFile(file);
                                 updateRegister(userData);
                             }else{
                                 Toast.makeText(getContext(), "El ID del producto ingresado ya existe", Toast.LENGTH_SHORT).show();

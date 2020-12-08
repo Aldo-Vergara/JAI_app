@@ -100,7 +100,7 @@ public class ContactFragment extends Fragment implements OnMapReadyCallback {
                                     UserMember userMember = objSnaptshot.getValue(UserMember.class);
                                     if(userData.getNumSeller().equals(userMember.getNumMember())){
                                         Glide.with(getActivity()).load(userMember.getImage()).centerCrop().into(imgViewContact);
-                                        txtViewNameContact.setText(userMember.getName());
+                                        txtViewNameContact.setText(userMember.getName() +" "+ userMember.getLastname());
                                         txtViewPhoneContact.setText(userMember.getPhoneNumber());
                                         dLat = userMember.getUbLat();
                                         dLong = userMember.getUbLong();
@@ -134,14 +134,6 @@ public class ContactFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        /*LatLng latLng = new LatLng(dLat, dLong);
-        googleMap.addMarker(new MarkerOptions().position(latLng).title("Ubicación de "+txtViewNameContact.getText().toString()));
-        CameraPosition cameraPosition = CameraPosition.builder()
-                .target(latLng)
-                .zoom(10)
-                .build();
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));*/
-
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -155,7 +147,7 @@ public class ContactFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onLocationChanged(Location location) {
                     LatLng miUbicacion = new LatLng(dLat, dLong);
-                    markerUbication =  googleMap.addMarker(new MarkerOptions().position(miUbicacion).title("Ubicación de "+txtViewNameContact.getText().toString()).draggable(true));
+                    markerUbication =  googleMap.addMarker(new MarkerOptions().position(miUbicacion).title("Ubicación de "+txtViewNameContact.getText().toString()));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(miUbicacion));
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(miUbicacion)

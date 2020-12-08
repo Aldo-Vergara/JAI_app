@@ -223,7 +223,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                                             assert uri != null;
 
                                             List<Product> productList = new ArrayList<>();
-                                            Product product = new Product(UUID.randomUUID().toString(), imagePrb);
+                                            Product product = new Product("null", imagePrb);
                                             productList.add(product);
                                             UserMember userMember = new UserMember(
                                                     UUID.randomUUID().toString(),

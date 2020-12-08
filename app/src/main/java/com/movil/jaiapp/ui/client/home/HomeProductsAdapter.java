@@ -16,7 +16,6 @@ import com.movil.jaiapp.models.Product;
 
 import java.util.List;
 
-
 public class HomeProductsAdapter extends RecyclerView.Adapter<HomeProductsAdapter.HomeProductsViewHolder>{
     private List<Product> productList;
     private FragmentActivity activity;

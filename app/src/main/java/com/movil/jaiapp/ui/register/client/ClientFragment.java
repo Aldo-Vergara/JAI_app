@@ -125,7 +125,11 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
 
                                 if(task.isSuccessful()){
                                     List<Product> sellerProductList = new ArrayList<>();
-                                    sellerProductList = userMember.getProductsList();
+                                    for (int i = 0; i < userMember.getProductsList().size(); i++){
+                                        if(userMember.getProductsList().get(i).getStatus() == 1){
+                                            sellerProductList.add(userMember.getProductsList().get(i));
+                                        }
+                                    }
                                     List<Product> wishProductList = new ArrayList<>();
                                     Product product = new Product(UUID.randomUUID().toString(), imagePrb);
                                     wishProductList.add(product);

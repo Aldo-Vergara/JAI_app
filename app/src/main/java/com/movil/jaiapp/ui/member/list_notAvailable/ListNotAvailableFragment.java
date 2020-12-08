@@ -82,11 +82,12 @@ public class ListNotAvailableFragment extends Fragment {
 
                         ArrayList<Product> listProducts = new ArrayList<>();
                         for(int j = 0; j < userData.getProductsList().size(); j++){
-                            if(userData.getProductsList().get(j).getStatus() == 0){
+                            if(userData.getProductsList().get(j) != null && userData.getProductsList().get(j).getStatus() == 0 &&
+                                    userData.getProductsList().get(j).getCreated() != null){
                                 listProducts.add(userData.getProductsList().get(j));
                             }
                         }
-                        adapter = new ListProductsAdapter(listProducts.subList(1, listProducts.size()), getActivity(), false,
+                        adapter = new ListProductsAdapter(listProducts, getActivity(), false,
                                 databaseReference, userData, progressDialog);
                         recyclerView.setAdapter(adapter);
                         break;

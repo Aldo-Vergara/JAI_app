@@ -2,6 +2,7 @@ package com.movil.jaiapp.ui.member.profile;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -149,9 +150,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            userData.setPhoneNumber(etPhone.getText().toString().trim());
-                                            userData.setPassword(etPassword.getText().toString().trim());
-                                            updateRegister(userData);
+                                            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                                            dialog.setTitle("Confirmación");
+                                            dialog.setMessage("¿Esta seguro de actualizar su información?");
+                                            dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    userData.setPhoneNumber(etPhone.getText().toString().trim());
+                                                    userData.setPassword(etPassword.getText().toString().trim());
+                                                    updateRegister(userData);
+                                                }
+                                            });
                                         }else{
                                             mShowAlert("Error", "No se pudo establecer conexión con el servidor");
                                         }

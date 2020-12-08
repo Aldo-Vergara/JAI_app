@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -416,7 +417,17 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                                 }
                             }
                             if(!exist){
-                                updateRegister(userData);
+                                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                                dialog.setTitle("Confirmación");
+                                dialog.setMessage("¿Esta seguro?");
+                                dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        updateRegister(userData);
+                                    }
+                                });
+                                dialog.setNegativeButton("Cancelar", null);
+                                dialog.show();
                             }else{
                                 Toast.makeText(getContext(), "El ID del producto ingresado ya existe", Toast.LENGTH_SHORT).show();
                             }
@@ -440,17 +451,28 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                     boolean exist = true;
                     for(int i = 1; i < userData.getProductsList().size(); i++){
                         if(etIdP.getText().toString().trim().equals(userData.getProductsList().get(i).getId())){
-                            databaseReference.child("UserMember").child(userData.getId()).child("productsList").child(String.valueOf(i+1)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                            dialog.setTitle("Confirmación");
+                            dialog.setMessage("¿Esta seguro que desea eliminar el registro?");
+                            dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    databaseReference.child("UserMember").child(userData.getId()).child("productsList").child(String.valueOf(i+1)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
 
-                                    }else{
-                                        mShowAlert("Error", "No se pudo eliminar el producto");
-                                    }
-                                    progressDialog.dismiss();
+                                            }else{
+                                                mShowAlert("Error", "No se pudo eliminar el producto");
+                                            }
+                                            progressDialog.dismiss();
+                                        }
+                                    });
                                 }
                             });
+                            dialog.setNegativeButton("Cancelar", null);
+                            dialog.show();
+
                             exist = true;
                             flag = 1;
                             break;

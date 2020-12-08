@@ -86,7 +86,20 @@ public class HomeFragment extends Fragment {
                                     UserMember userMember = objSnaptshot.getValue(UserMember.class);
                                     if(userData.getNumSeller().equals(userMember.getNumMember())){
                                         userData.setSellerProductsList(userMember.getProductsList());
-                                        updateRegister(userData);
+
+                                        gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                                        recyclerView.setLayoutManager(gridLayoutManager);
+
+                                        ArrayList<Product> listProducts = new ArrayList<>();
+                                        for(int j = 0; j < userData.getSellerProductsList().size(); j++){
+                                            if(userData.getSellerProductsList().get(j).getStatus() == 1){
+                                                listProducts.add(userData.getSellerProductsList().get(j));
+                                            }
+                                        }
+
+                                        adapter = new HomeProductsAdapter(listProducts, getActivity(), databaseReference, userData, userMember);
+                                        recyclerView.setAdapter(adapter);
+
                                         break;
                                     }
                                 }
@@ -108,31 +121,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-    }
-
-    private void updateRegister(final UserClient user){
-        databaseReference.child("UserClient").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    gridLayoutManager = new GridLayoutManager(getContext(), 2);
-                    recyclerView.setLayoutManager(gridLayoutManager);
-
-                    ArrayList<Product> listProducts = new ArrayList<>();
-                    for(int j = 0; j < user.getSellerProductsList().size(); j++){
-                        if(user.getSellerProductsList().get(j).getStatus() == 1){
-                            listProducts.add(user.getSellerProductsList().get(j));
-                        }
-                    }
-
-                    adapter = new HomeProductsAdapter(listProducts, getActivity(), databaseReference, user, userMember);
-                    recyclerView.setAdapter(adapter);
-                }else{
-                    Toast.makeText(getContext(), "No se pudo actualizar la lista de productos", Toast.LENGTH_SHORT).show();
-                    //mShowAlert("Error", "No se pudo guardar el registro");
-                }
-            }
-        });
     }
 
     private void getUserMember() {

@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.R;
 import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserClient;
+import com.movil.jaiapp.models.UserMember;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,7 @@ public class WishListFragment extends Fragment {
     private DatabaseReference databaseReference;
     private FirebaseUser user;
     private UserClient userData;
+    private UserMember userMember;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -77,7 +79,22 @@ public class WishListFragment extends Fragment {
                     UserClient userClient = objSnaptshot.getValue(UserClient.class);
                     if(user.getEmail().equals(userClient.getEmail())){
                         userData = userClient;
-                        loadData(userData);
+                        getUserMember();
+
+                        layoutManager = new LinearLayoutManager(getContext());
+                        recyclerView.setLayoutManager(layoutManager);
+
+                        ArrayList<Product> listProducts = new ArrayList<>();
+                        for(int j = 0; j < userData.getWishProductsList().size(); j++){
+                            if(userData.getWishProductsList().get(j) != null && userData.getWishProductsList().get(j).getStatus() == 1 &&
+                                    userData.getWishProductsList().get(j).getCreated() != null){
+                                listProducts.add(userData.getWishProductsList().get(j));
+                            }
+                        }
+
+                        adapter = new WishProductsAdapter(listProducts, getActivity(),
+                                databaseReference, userData, userMember, progressDialog);
+                        recyclerView.setAdapter(adapter);
                         break;
                     }
                 }
@@ -90,30 +107,22 @@ public class WishListFragment extends Fragment {
         });
     }
 
-    private void loadData(final UserClient user){
-        databaseReference.child("UserClient").child(user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void getUserMember() {
+        databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-
-                    layoutManager = new LinearLayoutManager(getContext());
-                    recyclerView.setLayoutManager(layoutManager);
-
-                    ArrayList<Product> listProducts = new ArrayList<>();
-                    for(int j = 0; j < user.getWishProductsList().size(); j++){
-                        if(user.getWishProductsList().get(j) != null && user.getWishProductsList().get(j).getStatus() == 1 &&
-                                user.getWishProductsList().get(j).getCreated() != null){
-                            listProducts.add(user.getWishProductsList().get(j));
-                        }
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
+                    UserMember userMem = objSnaptshot.getValue(UserMember.class);
+                    if(userData.getNumSeller().equals(userMem.getNumMember())){
+                        userMember = userMem;
+                        break;
                     }
-
-                    adapter = new WishProductsAdapter(listProducts, getActivity(),
-                            databaseReference, userData, progressDialog);
-                    recyclerView.setAdapter(adapter);
-                }else{
-                    Toast.makeText(getContext(), "No se pudieron cargar sus productos", Toast.LENGTH_SHORT).show();
-                    //mShowAlert("Error", "No se pudo guardar el registro");
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

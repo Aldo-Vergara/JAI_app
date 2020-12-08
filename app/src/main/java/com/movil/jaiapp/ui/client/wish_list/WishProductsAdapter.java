@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.movil.jaiapp.R;
 import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserClient;
+import com.movil.jaiapp.models.UserMember;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class WishProductsAdapter extends RecyclerView.Adapter<WishProductsAdapte
     private FragmentActivity activity;
     private DatabaseReference databaseReference;
     private UserClient userClient;
+    private UserMember userMember;
     private ProgressDialog progressDialog;
 
     public static class WishProductsViewHolder extends RecyclerView.ViewHolder {
@@ -52,11 +54,12 @@ public class WishProductsAdapter extends RecyclerView.Adapter<WishProductsAdapte
     }
 
     public WishProductsAdapter(List<Product> productList, FragmentActivity activity,
-                               DatabaseReference databaseReference, UserClient userClient, ProgressDialog progressDialog) {
+                               DatabaseReference databaseReference, UserClient userClient, UserMember userMember, ProgressDialog progressDialog) {
         this.productList = productList;
         this.activity = activity;
         this.databaseReference = databaseReference;
         this.userClient = userClient;
+        this.userMember = userMember;
         this.progressDialog = progressDialog;
     }
 

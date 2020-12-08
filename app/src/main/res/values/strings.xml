@@ -52,7 +52,7 @@
     <string name="title_activity_main_client">MainClientActivity</string>
     <string name="nav_header_title">Android Studio</string>
 
-    <string name="menu_client_home">Inicio</string>
+    <string name="menu_client_home">Productos</string>
     <string name="menu_client_wishList">Lista de deseos</string>
     <string name="menu_client_contact">Información del vendedor</string>
 </resources>

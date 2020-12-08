@@ -6,179 +6,186 @@
     android:layout_height="match_parent"
     tools:context=".ui.member.search.SearchFragment">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints">
-
-        <ImageView
-            android:id="@+id/member_frag_search_imgView_photoProduct"
-            android:layout_width="175dp"
-            android:layout_height="171dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:contentDescription="@string/str_all"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:src="@drawable/icon_splash"/>
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
 
-            <ImageButton
-                android:id="@+id/member_frag_search_imgBtn_camera"
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
+            <ImageView
+                android:id="@+id/member_frag_search_imgView_photoProduct"
+                android:layout_width="175dp"
+                android:layout_height="171dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:contentDescription="@string/str_all"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/ic_add_photo" />
+                android:src="@drawable/icon_splash" />
 
-            <ImageButton
-                android:id="@+id/member_frag_search_imgBtn_gallery"
-                android:layout_width="100dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/member_frag_search_imgBtn_camera"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:src="@drawable/ic_add_photo" />
+
+                <ImageButton
+                    android:id="@+id/member_frag_search_imgBtn_gallery"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:src="@drawable/ic_add_image" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/ic_add_image" />
-        </LinearLayout>
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="260dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/str_product_id">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/str_product_id">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/member_frag_search_txtEdit_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/member_frag_search_txtEdit_id"
+                <ImageButton
+                    android:id="@+id/member_frag_search_imgBtn_search"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_search" />
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/member_frag_search_spn_category"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:spinnerMode="dropdown" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/str_product_name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/member_frag_search_txtEdit_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <ImageButton
-                android:id="@+id/member_frag_search_imgBtn_search"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/str_product_cost">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/member_frag_search_txtEdit_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/str_product_description">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/member_frag_search_txtEdit_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:freezesText="false"
+                    android:gravity="center"
+                    android:text="@string/str_product_status"
+                    android:textSize="18sp" />
+
+                <Switch
+                    android:id="@+id/member_frag_search_switch_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:scaleX="1.5"
+                    android:scaleY="1.2"
+                    android:showText="true"
+                    android:splitTrack="false"
+                    android:textOff="@string/str_product_status_not_available"
+                    android:textOn="@string/str_product_status_available" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_search" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:paddingTop="20dp">
 
-        <Spinner
-            android:id="@+id/member_frag_search_spn_category"
-            android:layout_width="match_parent"
-            android:layout_height="47dp"
-            android:spinnerMode="dropdown" />
+                <Button
+                    android:id="@+id/member_frag_search_btn_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:text="@string/str_delete"
+                    android:textSize="18sp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/str_product_name">
+                <Button
+                    android:id="@+id/member_frag_search_btn_update"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:text="@string/str_update"
+                    android:textSize="18sp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/member_frag_search_txtEdit_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/str_product_cost">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/member_frag_search_txtEdit_cost"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/str_product_description">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/member_frag_search_txtEdit_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:freezesText="false"
-                android:gravity="center"
-                android:text="@string/str_product_status"
-                android:textSize="18sp" />
-
-            <Switch
-                android:id="@+id/member_frag_search_switch_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:scaleX="1.5"
-                android:scaleY="1.2"
-                android:showText="true"
-                android:splitTrack="false"
-                android:textOn="@string/str_product_status_available"
-                android:textOff="@string/str_product_status_not_available"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingTop="20dp">
+            </LinearLayout>
 
             <Button
-                android:id="@+id/member_frag_search_btn_delete"
-                android:layout_width="wrap_content"
+                android:id="@+id/member_frag_search_btn_clean"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:text="@string/str_delete"
-                android:textSize="18sp" />
-
-            <Button
-                android:id="@+id/member_frag_search_btn_update"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:text="@string/str_update"
+                android:text="@string/str_clean"
                 android:textSize="18sp" />
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/member_frag_search_btn_clean"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:text="@string/str_clean"
-            android:textSize="18sp" />
-
-    </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

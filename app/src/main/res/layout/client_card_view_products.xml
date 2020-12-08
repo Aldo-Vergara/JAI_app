@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="220dp"
+    android:layout_margin="5dp"
+    android:orientation="vertical"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="5">
+
+        <ImageView
+            android:id="@+id/client_cardView_imgView_imgProduct"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/client_cardView_txtView_nameProduct"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/client_cardView_txtView_costProduct"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/client_cardView_txtView_IDProduct"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/client_cardView_imgBtn_favorite"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_not_favorite" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

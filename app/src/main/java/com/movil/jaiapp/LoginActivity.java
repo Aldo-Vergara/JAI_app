@@ -8,7 +8,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -146,6 +145,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }else{
                                 mShowAlert("Error", "Hubo un error al autenticar al usuario");
                             }
+                            progressDialog.dismiss();
                         }
                     });
 

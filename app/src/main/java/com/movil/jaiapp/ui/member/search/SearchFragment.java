@@ -369,16 +369,71 @@ public class SearchFragment extends Fragment implements View.OnClickListener, Ad
                 break;
             case R.id.member_frag_search_btn_update:
                 if(flag == 1){
+                    boolean exist = false;
                     if(!etIdP.getText().toString().trim().isEmpty() && !etNameP.getText().toString().trim().isEmpty() &&
                             !etCostP.getText().toString().trim().isEmpty() && !etDescP.getText().toString().trim().isEmpty()){
                         if(!strCategory.equals("")){
-
-                            updateRegister(userData);
+                            if(etIdP.getText().toString().trim().equals(userData.getProductsList().get(position).getId())){
+                                exist = false;
+                            }else{
+                                for(int i = 0; i < userData.getProductsList().size(); i++) {
+                                    if (etIdP.getText().toString().trim().equals(userData.getProductsList().get(i).getId())) {
+                                        exist = true;
+                                        break;
+                                    }else{
+                                        exist = false;
+                                    }
+                                }
+                            }
+                            if(!exist){
+                                updateRegister(userData);
+                            }else{
+                                Toast.makeText(getContext(), "El ID del producto ingresado ya existe", Toast.LENGTH_SHORT).show();
+                            }
                         }else{
                             Toast.makeText(getContext(), "Debe seleccionar una categoría", Toast.LENGTH_SHORT).show();
                         }
                     }else{
                         mValidate();
+                    }
+                }else{
+                    flag = 0;
+                    mShowAlert("Información", "Primero debe buscar un producto");
+                }
+                break;
+            case R.id.member_frag_search_btn_delete:
+                if(flag == 1){
+                    progressDialog.setIcon(R.mipmap.ic_launcher);
+                    progressDialog.setMessage("Eliminando...");
+                    progressDialog.show();
+
+                    boolean exist = true;
+                    for(int i = 1; i < userData.getProductsList().size(); i++){
+                        if(etIdP.getText().toString().trim().equals(userData.getProductsList().get(i).getId())){
+                            databaseReference.child("UserMember").child(userData.getId()).child("productsList").child(String.valueOf(i+1)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+
+                                    }else{
+                                        mShowAlert("Error", "No se pudo eliminar el producto");
+                                    }
+                                    progressDialog.dismiss();
+                                }
+                            });
+                            exist = true;
+                            flag = 1;
+                            break;
+                        }else{
+                            flag = 0;
+                            exist = false;
+                        }
+                    }
+                    if(!exist){
+                        flag = 0;
+                        exist = true;
+                        mShowAlert("Información", "El producto con el ID: "+etIdP.getText().toString().trim() + " no existe");
+                        mClean();
                     }
                 }else{
                     flag = 0;

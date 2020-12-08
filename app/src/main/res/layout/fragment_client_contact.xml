@@ -23,25 +23,32 @@
 
             <ImageView
                 android:id="@+id/client_frag_contact_imgView_photoMember"
-                android:layout_width="match_parent"
+                android:layout_width="175dp"
                 android:layout_height="175dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="20dp"
                 android:src="@drawable/icon_splash" />
 
             <TextView
                 android:id="@+id/client_frag_contact_txtView_nameMember"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/client_frag_contact_txtView_phoneMember"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="18sp" />
 
             <com.google.android.gms.maps.MapView
-                android:id="@+id/mapView"
+                android:id="@+id/client_frag_contact_mapView"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="250dp"
                 android:layout_marginTop="20dp" />
 
         </LinearLayout>

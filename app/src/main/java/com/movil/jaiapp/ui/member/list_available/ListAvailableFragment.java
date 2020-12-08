@@ -1,5 +1,6 @@
 package com.movil.jaiapp.ui.member.list_available;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +21,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.R;
+import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
+
+import java.util.ArrayList;
 
 public class ListAvailableFragment extends Fragment {
 
     private ListAvailableViewModel listAvailableViewModel;
+    private ProgressDialog progressDialog;
 
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
@@ -55,6 +60,8 @@ public class ListAvailableFragment extends Fragment {
     }
 
     private void initComponents(View root) {
+        progressDialog = new ProgressDialog(getContext());
+
         recyclerView = root.findViewById(R.id.member_frag_list_recyclerView_available);
         recyclerView.setHasFixedSize(true);
     }
@@ -72,8 +79,15 @@ public class ListAvailableFragment extends Fragment {
                         layoutManager = new LinearLayoutManager(getContext());
                         recyclerView.setLayoutManager(layoutManager);
 
-                        adapter = new ListProductsAdapter(userData.getProductsList(), getActivity(), true,
-                                databaseReference, userData);
+                        ArrayList<Product> listProducts = null;
+                        for(int j = 0; j < userData.getProductsList().size(); j++){
+                            if(userData.getProductsList().get(j).getStatus() == 1){
+                                listProducts.add(userData.getProductsList().get(j));
+                            }
+                        }
+
+                        adapter = new ListProductsAdapter(listProducts, getActivity(), true,
+                                databaseReference, userData, progressDialog);
                         recyclerView.setAdapter(adapter);
                         break;
                     }

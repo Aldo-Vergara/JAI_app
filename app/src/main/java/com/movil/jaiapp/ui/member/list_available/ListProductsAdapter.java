@@ -1,7 +1,7 @@
 package com.movil.jaiapp.ui.member.list_available;
 
 import android.app.AlertDialog;
-import android.net.Uri;
+import android.app.ProgressDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +10,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +23,6 @@ import com.movil.jaiapp.R;
 import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
 
-import java.io.File;
 import java.util.List;
 
 
@@ -35,9 +32,11 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
     private DatabaseReference databaseReference;
     private UserMember userMember;
     private boolean isListAvailable;
+    private ProgressDialog progressDialog;
 
     public static class ListProductsViewHolder extends RecyclerView.ViewHolder {
         public ImageView imgViewProduct;
+        public TextView textViewID;
         public TextView textViewName;
         public TextView textViewDescription;
         public TextView textViewCost;
@@ -47,6 +46,7 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
         public ListProductsViewHolder(View v) {
             super(v);
             imgViewProduct = v.findViewById(R.id.member_card_view_imgView_product);
+            textViewID = v.findViewById(R.id.member_card_view_txtView_IDProduct);
             textViewName = v.findViewById(R.id.member_card_view_txtView_nameProduct);
             textViewDescription = v.findViewById(R.id.member_card_view_txtView_descProduct);
             textViewCost = v.findViewById(R.id.member_card_view_txtView_costProduct);
@@ -56,12 +56,13 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
     }
 
     public ListProductsAdapter(List<Product> productList, FragmentActivity activity, boolean isListAvailable,
-                               DatabaseReference databaseReference, UserMember userMember) {
+                               DatabaseReference databaseReference, UserMember userMember, ProgressDialog progressDialog) {
         this.productList = productList;
         this.activity = activity;
         this.isListAvailable = isListAvailable;
         this.databaseReference = databaseReference;
         this.userMember = userMember;
+        this.progressDialog = progressDialog;
     }
 
     @Override
@@ -78,6 +79,7 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
     @Override
     public void onBindViewHolder(final ListProductsViewHolder viewHolder, final int i) {
         loadImgView(viewHolder, i);
+        viewHolder.textViewID.setText(productList.get(i).getId());
         viewHolder.textViewName.setText(productList.get(i).getName());
         viewHolder.textViewDescription.setText("Descripción: " + productList.get(i).getDescription());
         viewHolder.textViewCost.setText("$" + productList.get(i).getCost());
@@ -118,12 +120,16 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
         });
     }
 
-    private void eventImgButtonDelete(ListProductsViewHolder viewHolder, int i) {
+    private void eventImgButtonDelete(ListProductsViewHolder viewHolder, final int i) {
         if(isListAvailable) {
+            progressDialog.setIcon(R.mipmap.ic_launcher);
+            progressDialog.setMessage("Actualizando...");
+            progressDialog.show();
+
             viewHolder.imgBtnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    databaseReference.child("UserMember").child(userMember.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    databaseReference.child("UserMember").child(userMember.getId()).child("productsList").child(String.valueOf(i+1)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
@@ -131,6 +137,7 @@ public class ListProductsAdapter extends RecyclerView.Adapter<ListProductsAdapte
                             }else{
                                 mShowAlert("Error", "No se pudo eliminar el producto");
                             }
+                            progressDialog.dismiss();
                         }
                     });
                 }

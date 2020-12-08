@@ -42,7 +42,7 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
     private ProgressDialog progressDialog;
     private Button btnRegister;
     private EditText etNumMember, etName, etLastname, etEmail, etPassword, etConfirmPassword;
-    private String imagePrb = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fzazsupercentro.com%2F%3Fattachment_id%3D2338&psig=AOvVaw0mNIC2HF31XkNKb4TZnSHz&ust=1607457787753000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJjppIbVvO0CFQAAAAAdAAAAABAD";
+    private String imagePrb = "https://firebasestorage.googleapis.com/v0/b/mobshop-c7b0c.appspot.com/o/pictures%2Fimagen-no-disponible.png?alt=media&token=c2687b50-5fef-4b2e-8fd3-376c73a8f034";
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
@@ -154,7 +154,6 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
                                             }else{
                                                 mShowAlert("Error", "Se ha producido un error en la conexión");
                                             }
-                                            progressDialog.dismiss();
                                         }
                                     });
 
@@ -172,6 +171,7 @@ public class ClientFragment extends Fragment implements View.OnClickListener {
                 if(b){
                     etNumMember.setError("El número de socio ingresado no existe");
                 }
+                progressDialog.dismiss();
             }
 
             @Override

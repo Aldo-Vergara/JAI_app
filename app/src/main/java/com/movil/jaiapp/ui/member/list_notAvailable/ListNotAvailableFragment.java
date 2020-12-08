@@ -1,5 +1,6 @@
 package com.movil.jaiapp.ui.member.list_notAvailable;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +21,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.R;
+import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserMember;
 import com.movil.jaiapp.ui.member.list_available.ListProductsAdapter;
+
+import java.util.ArrayList;
 
 public class ListNotAvailableFragment extends Fragment {
 
     private ListNotAvailableViewModel listNotAvailableViewModel;
+    private ProgressDialog progressDialog;
+
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
@@ -55,7 +61,9 @@ public class ListNotAvailableFragment extends Fragment {
     }
 
     private void initComponents(View root) {
-        recyclerView = root.findViewById(R.id.member_frag_list_recyclerView_available);
+        progressDialog = new ProgressDialog(getContext());
+
+        recyclerView = root.findViewById(R.id.member_frag_list_recyclerView_notAvailable);
         recyclerView.setHasFixedSize(true);
     }
 
@@ -72,8 +80,14 @@ public class ListNotAvailableFragment extends Fragment {
                         layoutManager = new LinearLayoutManager(getContext());
                         recyclerView.setLayoutManager(layoutManager);
 
-                        adapter = new ListProductsAdapter(userData.getProductsList(), getActivity(), false,
-                                databaseReference, userData);
+                        ArrayList<Product> listProducts = null;
+                        for(int j = 0; j < userData.getProductsList().size(); j++){
+                            if(userData.getProductsList().get(j).getStatus() == 0){
+                                listProducts.add(userData.getProductsList().get(j));
+                            }
+                        }
+                        adapter = new ListProductsAdapter(listProducts.subList(1, listProducts.size()), getActivity(), false,
+                                databaseReference, userData, progressDialog);
                         recyclerView.setAdapter(adapter);
                         break;
                     }

@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,6 +28,9 @@ import com.movil.jaiapp.models.UserMember;
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
@@ -53,7 +57,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void initComponents(View root) {
-
+        recyclerView = root.findViewById(R.id.client_frag_home_recyclerView_products);
+        recyclerView.setHasFixedSize(true);
     }
 
     private void getUserActive() {
@@ -101,10 +106,11 @@ public class HomeFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(getContext(), "Producto actualizados", Toast.LENGTH_SHORT).show();
-                    //getActivity().finish();
+
+                    adapter = new HomeProductsAdapter(user.getSellerProductsList(), getActivity());
+                    recyclerView.setAdapter(adapter);
                 }else{
-                    Toast.makeText(getContext(), "No se pudo actulizar loista de productos", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "No se pudo actualizar la lista de productos", Toast.LENGTH_SHORT).show();
                     //mShowAlert("Error", "No se pudo guardar el registro");
                 }
             }

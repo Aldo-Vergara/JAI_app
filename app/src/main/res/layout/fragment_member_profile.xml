@@ -10,9 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,19 +22,12 @@
             android:orientation="vertical"
             tools:ignore="MissingConstraints">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:gravity="center"
-                android:text="Mis datos"
-                android:textSize="30dp" />
-
             <ImageView
                 android:id="@+id/member_frag_profile_imgView_photoMember"
                 android:layout_width="175dp"
                 android:layout_height="175dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:src="@drawable/icon_splash" />
 

@@ -25,7 +25,6 @@ import androidx.lifecycle.ViewModelProviders;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -35,18 +34,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -54,12 +45,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -92,7 +85,7 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
     private ImageView imgViewProduct;
     private ImageButton imgBtnCamera, imgBtnGallery;
     private String currentPhotoPath, imageName = "";
-    private String imagePrb = "https://www.google.com/url?sa=i&url=http%3A%2F%2Fzazsupercentro.com%2F%3Fattachment_id%3D2338&psig=AOvVaw0mNIC2HF31XkNKb4TZnSHz&ust=1607457787753000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCJjppIbVvO0CFQAAAAAdAAAAABAD";
+    private String imagePrb = "https://firebasestorage.googleapis.com/v0/b/mobshop-c7b0c.appspot.com/o/pictures%2Fimagen-no-disponible.png?alt=media&token=c2687b50-5fef-4b2e-8fd3-376c73a8f034";
 
     private int contador = 0;
     private EditText etName, etLastname, etNumMember, etPhoneNumber, etEmail, etPassword, etConfirmPassword;
@@ -236,20 +229,43 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                                         1
                                 );
 
-                                databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            mClean();
-                                            startActivity(new Intent(getContext(), MainMemberActivity.class));
-                                            getActivity().finish();
-                                        } else {
-                                            mShowAlert("Error", "Se ha producido un error en la conexión");
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        boolean b = false;
+                                        for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
+                                            final UserMember userMember = objSnaptshot.getValue(UserMember.class);
+                                            if(!etNumMember.getText().toString().trim().equals(userMember.getNumMember())){
+                                                databaseReference.child("UserMember").child(userMember.getId()).setValue(userMember).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            mClean();
+                                                            startActivity(new Intent(getContext(), MainMemberActivity.class));
+                                                            getActivity().finish();
+                                                        } else {
+                                                            mShowAlert("Error", "Se ha producido un error en la conexión");
+                                                        }
+                                                    }
+                                                });
+                                                b = false;
+                                                break;
+                                            }else{
+                                                b = true;
+                                            }
                                         }
-                                        progressDialog.dismiss();
+                                        if(b){
+                                            etNumMember.setError("El número de socio ingresado ya existe");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
                                     }
                                 });
                             }
+                            progressDialog.dismiss();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -418,8 +434,10 @@ public class MemberFragment extends Fragment implements View.OnClickListener, On
                 @Override
                 public void onLocationChanged(Location location) {
                     if(contador == 0 ){
+                        dLat = location.getLatitude();
+                        dLong = location.getLongitude();
                         LatLng miUbicacion = new LatLng(location.getLatitude(), location.getLongitude());
-                        markerUbication =  mMap.addMarker(new MarkerOptions().position(miUbicacion).title("ubicacion actual").draggable(true));
+                        markerUbication =  mMap.addMarker(new MarkerOptions().position(miUbicacion).title("Ubicacion actual").draggable(true));
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(miUbicacion));
                         CameraPosition cameraPosition = new CameraPosition.Builder()
                                 .target(miUbicacion)

@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +24,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.movil.jaiapp.R;
+import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserClient;
+
+import java.util.ArrayList;
 
 public class WishListFragment extends Fragment {
 
@@ -92,7 +96,18 @@ public class WishListFragment extends Fragment {
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
 
-                    adapter = new WishProductsAdapter(user.getWishProductsList(), getActivity(),
+                    layoutManager = new LinearLayoutManager(getContext());
+                    recyclerView.setLayoutManager(layoutManager);
+
+                    ArrayList<Product> listProducts = new ArrayList<>();
+                    for(int j = 0; j < user.getWishProductsList().size(); j++){
+                        if(user.getWishProductsList().get(j) != null && user.getWishProductsList().get(j).getStatus() == 1 &&
+                                user.getWishProductsList().get(j).getCreated() != null){
+                            listProducts.add(user.getWishProductsList().get(j));
+                        }
+                    }
+
+                    adapter = new WishProductsAdapter(listProducts, getActivity(),
                             databaseReference, userData, progressDialog);
                     recyclerView.setAdapter(adapter);
                 }else{

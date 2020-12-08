@@ -27,6 +27,7 @@ import com.movil.jaiapp.R;
 import com.movil.jaiapp.models.Product;
 import com.movil.jaiapp.models.UserClient;
 import com.movil.jaiapp.models.UserMember;
+import com.movil.jaiapp.ui.member.list_available.ListProductsAdapter;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,7 @@ public class HomeFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseUser user;
+    private UserMember userMember;
     private UserClient userData;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -76,6 +78,7 @@ public class HomeFragment extends Fragment {
                     UserClient userClient = objSnaptshot.getValue(UserClient.class);
                     if(user.getEmail().equals(userClient.getEmail())){
                         userData = userClient;
+                        getUserMember();
                         databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -122,12 +125,32 @@ public class HomeFragment extends Fragment {
                         }
                     }
 
-                    adapter = new HomeProductsAdapter(listProducts, getActivity());
+                    adapter = new HomeProductsAdapter(listProducts, getActivity(), databaseReference, user, userMember);
                     recyclerView.setAdapter(adapter);
                 }else{
                     Toast.makeText(getContext(), "No se pudo actualizar la lista de productos", Toast.LENGTH_SHORT).show();
                     //mShowAlert("Error", "No se pudo guardar el registro");
                 }
+            }
+        });
+    }
+
+    private void getUserMember() {
+        databaseReference.child("UserMember").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot objSnaptshot : dataSnapshot.getChildren()){
+                    UserMember userMem = objSnaptshot.getValue(UserMember.class);
+                    if(userData.getNumSeller().equals(userMem.getNumMember())){
+                        userMember = userMem;
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

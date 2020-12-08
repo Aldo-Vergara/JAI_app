@@ -243,6 +243,7 @@ public class AddFragment extends Fragment implements View.OnClickListener, Adapt
                             etCostP.getText().toString().trim(),
                             etDescP.getText().toString().trim(),
                             statusP,
+                            0,
                             uri.toString(),
                             new Date().toString(),
                             ""

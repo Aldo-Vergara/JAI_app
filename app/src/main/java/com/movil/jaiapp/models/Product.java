@@ -7,6 +7,7 @@ public class Product {
     private String cost;
     private String description;
     private int status;
+    private int favorite;
     private String image;
     private String created;
     private String updated;
@@ -18,13 +19,14 @@ public class Product {
         this.image = image;
     }
 
-    public Product(String id, String category, String name, String cost, String description, int status, String image, String created, String updated) {
+    public Product(String id, String category, String name, String cost, String description, int status, int favorite, String image, String created, String updated) {
         this.id = id;
         this.category = category;
         this.name = name;
         this.cost = cost;
         this.description = description;
         this.status = status;
+        this.favorite = favorite;
         this.image = image;
         this.created = created;
         this.updated = updated;
@@ -76,6 +78,14 @@ public class Product {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(int favorite) {
+        this.favorite = favorite;
     }
 
     public String getImage() {
